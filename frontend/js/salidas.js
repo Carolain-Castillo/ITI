@@ -1,0 +1,80 @@
+// frontend/js/salidas.js
+
+// Cargar la columna "Salida" con los activos en estado "Por Retirar"
+document.addEventListener('DOMContentLoaded', async () => {
+  const cont = document.getElementById('salida-lista');
+  if (!cont) return; // si no existe el contenedor, no hacemos nada
+
+  await cargarSalida(cont);
+
+  // Prepara el modal compartido (si ya está listo en otros scripts, no pasa nada)
+  if (typeof prepararModal === 'function') {
+    prepararModal();
+  }
+});
+
+async function cargarSalida(cont) {
+  try {
+    const url = `/api/activos?estado=${encodeURIComponent('Por Retirar')}&_=${Date.now()}`;
+    const resp = await fetch(url);
+    let items = await resp.json();
+
+    items = Array.isArray(items)
+      ? items.filter(it => (it.estado || '').trim().toLowerCase() === 'por retirar')
+      : [];
+
+    // >>> Contador
+    const countEl = document.getElementById('salida-count');
+    if (countEl) countEl.textContent = String(items.length);
+    // <<<
+
+    cont.innerHTML = '';
+    if (items.length === 0) return;
+
+    items.forEach(it => {
+      const row = document.createElement('div');
+      row.className = 'activo-datos';
+      row.dataset.id = it.id;
+      row.style.cursor = 'pointer';
+      row.title = 'Ver detalle';
+
+      row.innerHTML = `
+        <span>${it.numero}</span>
+        <span>${it.categoria}</span>
+        <span>${(it.estado || '').trim()}</span>
+      `;
+
+      // Reutiliza el mismo modal y función abrirDetalle definida en entrada.js
+      row.addEventListener('click', () => {
+        if (typeof abrirDetalle === 'function') {
+          abrirDetalle(it.id);
+        } else {
+          console.warn('abrirDetalle no está disponible aún.');
+        }
+      });
+
+      cont.appendChild(row);
+    });
+  } catch (err) {
+    console.error('No se pudo cargar "Salida"', err);
+  }
+}
+
+// Mostrar/Ocultar el formulario bajo cada activo
+function mostrarFormulario(icono) {
+  const contenedorActivo = icono.closest('.activo');
+  if (!contenedorActivo) return;
+
+  const formulario = contenedorActivo.querySelector('.form-salida');
+  if (!formulario) return;
+
+  if (formulario.classList.contains('oculto')) {
+    formulario.classList.remove('oculto');
+    icono.classList.remove('fa-eye');
+    icono.classList.add('fa-eye-slash');
+  } else {
+    formulario.classList.add('oculto');
+    icono.classList.remove('fa-eye-slash');
+    icono.classList.add('fa-eye');
+  }
+}

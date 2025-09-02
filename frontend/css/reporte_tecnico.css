@@ -1,0 +1,254 @@
+:root{
+  --burdeo:#7b2325;
+}
+
+body{
+  background:#f0f0f0;
+  font-family:'Segoe UI',sans-serif;
+  margin:0;
+}
+
+.reporte-container{
+  max-width:900px;
+  margin:40px auto;
+  background:#fff;
+  padding:24px 28px;
+  border-radius:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  border-top:6px solid var(--burdeo);
+  box-sizing:border-box;
+}
+
+.reporte-header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:18px;
+}
+.reporte-header h2{
+  margin:0;
+  color:var(--burdeo);
+  font-size:1.6rem;
+}
+
+.reporte-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:18px;
+}
+
+.bloque{
+  border:2px solid #ccc;
+  border-radius:8px;
+  padding:16px;
+  background:#fff;
+}
+.bloque legend{
+  padding:0 8px;
+  color:var(--burdeo);
+  font-weight:700;
+  font-size:.95rem;
+}
+
+.campo{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:10px;
+}
+.campo label{
+  font-weight:600;
+  color:#333;
+  font-size:.92rem;
+}
+.campo input,
+.campo select,
+.campo textarea{
+  border:1px solid #ccc;
+  border-radius:6px;
+  padding:10px;
+  font-size:.95rem;
+  background:#f9f9f9;
+  transition:border-color .2s ease;
+}
+.campo textarea{ resize:vertical; min-height:80px; }
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus{
+  outline:none;
+  border-color:var(--burdeo);
+  background:#fff;
+  box-shadow:0 0 0 2px rgba(123,35,37,.1);
+}
+
+/* Características y Notas en una sola línea (pantalla) */
+#rt-caracteristicas,
+#rt-notas{
+  min-height:36px;
+  height:36px;
+  max-height:36px;
+  resize:none;
+}
+
+.bloque-colspan{
+  grid-column:1 / -1;
+}
+
+.dropzone{
+  border:2px dashed #cfcfcf;
+  border-radius:8px;
+  padding:18px;
+  text-align:center;
+  color:#666;
+  font-size:.95rem;
+}
+.dropzone .link{
+  color:var(--burdeo);
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+.botonera{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+}
+.btn-primario{
+  background:var(--burdeo);
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:700;
+}
+.btn-primario:hover{ background:#5a1a1b; }
+.btn-secundario{
+  background:#6c757d;
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:700;
+}
+.btn-secundario:hover{ background:#5a6268; }
+
+/* Evaluación Inicial */
+.evaluacion-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 20px;
+}
+.evaluacion-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #333;
+}
+.evaluacion-grid input[type="checkbox"] {
+  transform: translateY(1px);
+}
+
+/* Preparación */
+.preparacion-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 40px;
+}
+.preparacion-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+.preparacion-grid input[type="checkbox"] {
+  transform: translateY(1px);
+}
+
+/* Estado */
+.estado-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.estado-grid label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #333;
+}
+.estado-grid input[type="checkbox"] {
+  transform: translateY(1px);
+}
+
+/* Parte Cambiada */
+.parte-cambiada-grid {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.parte-cambiada-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #333;
+}
+.campo-parte {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.campo-parte input {
+  flex: 1;
+  min-width: 180px;
+}
+
+/* =========================
+   NUEVO: Buscador arriba
+   ========================= */
+.buscador-activo{ margin-bottom: 6px; }
+.buscador-grid{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap:10px 16px;
+  align-items:end;
+}
+.campo-buscar label{
+  visibility:hidden;
+  height:0; margin:0; padding:0;
+}
+.btn-buscar{
+  min-width:110px;
+  padding:10px 14px;
+  white-space:nowrap;
+}
+
+/* =========================
+   NUEVO: Datos del Activo
+   ========================= */
+.datos-activo-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px 16px;
+  align-items:end;
+}
+.campo-full{
+  grid-column: 1 / -1;
+}
+
+/* Responsive */
+@media (max-width: 720px){
+  .datos-activo-grid{ grid-template-columns: 1fr; }
+}
+
+@media (min-width:900px){
+  .bloque-colspan{ grid-column:1 / -1; }
+}

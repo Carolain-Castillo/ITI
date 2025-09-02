@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Salidas</title>
+  
+
+  <link rel="stylesheet" href="css/style_general.css">
+  <link rel="stylesheet" href="css/style_dashboard.css">
+  <link rel="stylesheet" href="css/salidas.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="js/salidas.js"></script>
+  
+</head>
+<body>
+  <div class="container">
+    <button onclick="location.href='index.html'" class="btn-volver">Volver</button>
+
+    <header>
+      <h1>Registro de Activos en Salida</h1>
+    </header>
+
+    <!-- Recuadros Entregado / Recibido -->
+    <div class="salida-recuadros">
+      <fieldset>
+        <legend>Entregado por:</legend>
+        <div class="form-grupo">
+          <label for="entregado-nombre">Nombre:</label>
+          <input type="text" id="entregado-nombre" name="entregado-nombre">
+        </div>
+        <div class="form-grupo">
+          <label for="entregado-fecha">Fecha recepción:</label>
+          <input type="date" id="entregado-fecha" name="entregado-fecha">
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Recibido por:</legend>
+        <div class="form-grupo">
+          <label for="recibido-nombre">Nombre:</label>
+          <input type="text" id="recibido-nombre" name="recibido-nombre">
+        </div>
+        <div class="form-grupo">
+          <label for="recibido-fecha">Fecha recepción:</label>
+          <input type="date" id="recibido-fecha" name="recibido-fecha">
+        </div>
+      </fieldset>
+    </div>
+
+    <section class="columna">
+
+      <div class="activo">
+        <!-- Fila fija: N° Activo + Tipo (centrado) + Estado (derecha) -->
+        <div class="activo-header">
+          <div class="activo-info">
+            <span><strong>N° Activo:</strong> PC-721</span>
+            <i class="fas fa-eye" onclick="mostrarFormulario(this)" aria-label="Mostrar/Ocultar formulario" title="Mostrar/Ocultar"></i>
+          </div>
+          <div class="activo-tipo">
+            <span><strong>Tipo:</strong> PC</span>
+          </div>
+          <div class="activo-estado">
+            <span><strong>Estado:</strong> Retiro</span>
+          </div>
+        </div>
+
+        <!-- Formulario oculto justo debajo (alineado a la izquierda) -->
+        <div class="form-salida oculto">
+          <div class="form-grupo">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" placeholder="Ingrese nombre" />
+          </div>
+          <div class="form-grupo">
+            <label for="contrato">Contrato:</label>
+            <input type="text" id="contrato" placeholder="Ingrese contrato" />
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+</body>
+</html>

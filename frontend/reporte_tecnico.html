@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crear Reporte Técnico</title>
+  
+  <link rel="stylesheet" href="css/style_general.css">
+  <link rel="stylesheet" href="css/reporte_tecnico.css">
+
+  <!-- Librerías para exportar el DOM con el mismo diseño -->
+  <script defer src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <script defer src="js/reporte_tecnico.js"></script>
+</head>
+<body>
+  <div class="reporte-container">
+
+    <!-- Logo CyD -->
+    <div class="logo-container" style="text-align:center; margin-bottom:15px;">
+      <img src="logo_cyd.png" alt="Logo CyD" style="max-width:150px; height:auto;">
+    </div>
+
+    <header class="reporte-header">
+      <h2>Reporte Técnico</h2>
+    </header>
+
+    <form class="reporte-grid" action="#" method="post">
+
+      <!--Buscador fuera del recuadro -->
+      <div class="buscador-activo bloque-colspan">
+        <div class="buscador-grid">
+          <div class="campo">
+            <label for="rt-numero">N° de Activo</label>
+            <input type="text" id="rt-numero" placeholder="Ej: PC-1234">
+          </div>
+          <div class="campo campo-buscar">
+            <label>&nbsp;</label>
+            <button type="button" id="rt-buscar" class="btn-primario btn-buscar">Buscar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloque: Datos del Activo -->
+      <fieldset class="bloque bloque-colspan">
+        <legend>Datos del Activo</legend>
+
+        <!-- Alineado en dos columnas -->
+        <div class="datos-activo-grid">
+
+          <!-- N° de Activo (solo lectura para que salga en el PDF) -->
+          <div class="campo">
+            <label for="rt-numero-view">N° de Activo</label>
+            <input type="text" id="rt-numero-view" readonly>
+          </div>
+          
+
+          <div class="campo">
+            <label for="rt-categoria">Categoría</label>
+            <input type="text" id="rt-categoria" readonly>
+          </div>
+          <div class="campo">
+            <label for="rt-estado">Estado</label>
+            <input type="text" id="rt-estado" readonly>
+          </div>
+
+          <div class="campo">
+            <label for="rt-remitente">Remitente</label>
+            <input type="text" id="rt-remitente" readonly>
+          </div>
+          <div class="campo">
+            <label for="rt-fecha-recepcion">Fecha Recepción TI</label>
+            <input type="text" id="rt-fecha-recepcion" readonly>
+          </div>
+
+          <div class="campo">
+            <label for="rt-ticket">Ticket</label>
+            <input type="text" id="rt-ticket" readonly>
+          </div>
+          <div class="campo">
+            <label for="rt-origen">Origen</label>
+            <input type="text" id="rt-origen" readonly>
+          </div>
+
+          <div class="campo campo-full">
+            <label for="rt-caracteristicas">Características</label>
+            <textarea id="rt-caracteristicas" rows="2" readonly></textarea>
+          </div>
+          <div class="campo campo-full">
+            <label for="rt-notas">Notas</label>
+            <textarea id="rt-notas" rows="2" readonly></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Bloque: Evaluación Inicial -->
+      <fieldset class="bloque bloque-colspan">
+        <legend>Evaluación Inicial</legend>
+        <div class="evaluacion-grid">
+          <label><input type="checkbox"> Enciende</label>
+          <label><input type="checkbox"> Inicia Sistema Operativo</label>
+          <label><input type="checkbox"> Puertos Funcionales</label>
+          <label><input type="checkbox"> Pantalla Funcional</label>
+
+          <label><input type="checkbox"> Batería Funcional</label>
+          <label><input type="checkbox"> Audio Funcional</label>
+          <label><input type="checkbox"> Teclado Funcional</label>
+          <label><input type="checkbox"> Cargador Funcional</label>
+
+          <label><input type="checkbox"> Tiene Tintas</label>
+          <label><input type="checkbox"> Cable de Poder</label>
+          <label><input type="checkbox"> Cable USB</label>
+          <label><input type="checkbox"> Cable VGA/HDMI</label>
+        </div>
+      </fieldset>
+
+      <!-- Bloque: Preparación -->
+      <fieldset class="bloque bloque-colspan">
+        <legend>Preparación</legend>
+        <div class="preparacion-grid">
+          <div>
+            <label><input type="checkbox"> Instalar SO</label>
+            <label><input type="checkbox"> Crear cuenta local CyD</label>
+            <label><input type="checkbox"> Instalar Drivers (HP, Lenovo, Dell)</label>
+            <label><input type="checkbox"> Actualización Firmware y SO</label>
+            <label><input type="checkbox"> Instalar Software base CyD</label>
+            <label><input type="checkbox"> Crear cuenta de administrador</label>
+            <label><input type="checkbox"> Quitar cuenta CyD de administradores</label>
+            <label><input type="checkbox"> Agregar CyD a usuarios avanzados/red</label>
+          </div>
+          <div>
+            <label><input type="checkbox"> Diagnóstico de teclado</label>
+            <label><input type="checkbox"> Diagnóstico de memoria</label>
+            <label><input type="checkbox"> Diagnóstico de placa lógica</label>
+            <label><input type="checkbox"> Diagnóstico de procesador</label>
+            <label><input type="checkbox"> Puertos funcionan correctamente</label>
+            <label><input type="checkbox"> Acondicionamiento de teclado</label>
+            <label><input type="checkbox"> Acondicionamiento de pantalla/carcasa</label>
+            <label><input type="checkbox"> Acondicionamiento del cargador</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Bloque: Estado -->
+      <fieldset class="bloque bloque-colspan">
+        <legend>Estado</legend>
+        <div class="estado-grid">
+          <label><input type="checkbox" id="estadoDisponible"> Disponible</label>
+          <label><input type="checkbox" id="estadoReciclar"> Reciclar</label>
+          <label><input type="checkbox" id="estadoPrestamo"> Préstamo</label>
+        </div>
+      </fieldset>
+
+      <!-- Bloque: Mejora (upgrade) -->
+      <fieldset class="bloque bloque-colspan">
+        <legend>Mejora (upgrade)</legend>
+        <div class="parte-cambiada-grid">
+          <label><input type="checkbox" name="parteCambiada" value="no" id="parteNo"> No</label>
+          <label><input type="checkbox" name="parteCambiada" value="si" id="parteSi"> Sí</label>
+          <div class="campo-parte">
+            <label for="detalleParte">Parte cambiada:</label>
+            <input type="text" id="detalleParte" name="detalleParte" placeholder="Especificar pieza..." disabled>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Bloque: Conclusión -->
+      <fieldset class="bloque bloque-colspan">
+        <legend>Conclusión y Recomendaciones</legend>
+        <div class="campo">
+          <textarea id="conclusion" name="conclusion" rows="4" placeholder="Escriba aquí las conclusiones y recomendaciones del reporte..."></textarea>
+        </div>
+      </fieldset>
+
+      <!-- Botones -->
+      <div class="botonera bloque-colspan">
+        <button type="submit" class="btn-primario">Guardar</button>
+        <button type="button" id="rt-exportar-pdf" class="btn-secundario" disabled>Exportar PDF</button>
+        <button type="button" class="btn-secundario" onclick="location.href='index.html'">Volver</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,403 @@
+.top-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.grafico {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;               /* centrado con flex */
+  flex-direction: column;      /* título arriba, gráfico abajo */
+  align-items: center;         /* centrado horizontal */
+  justify-content: center;     /* centrado vertical */
+  width: 250px;                /* un poco más ancho que antes */
+}
+
+.grafico canvas {
+  max-width: 200px;            /* tamaño máximo adaptable */
+  max-height: 200px;
+}
+
+.resumen {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  flex: 1;
+}
+
+.resumen table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.resumen th, .resumen td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+/* === Barra de filtro del Resumen (nuevo) === */
+.resumen-filtro{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:6px 0 12px 0;
+}
+.resumen-filtro select{
+  padding:6px 8px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  background:#fff;
+}
+.btn-mini{
+  background:#7b2325;
+  color:#fff;
+  border:none;
+  padding:6px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
+.btn-mini:hover{ opacity:.92; }
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buttons button {
+  background-color: #7b2325;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tablero {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.columna {
+  background: white;
+  padding: 10px;
+  flex: 1;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.columna h3 {
+  text-align: center;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #7b2325;
+  padding-bottom: 5px;
+}
+
+.activo {
+  background: #f0f8ff;
+  border-left: 4px solid #7b2325;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+footer {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.footer-box {
+  background: #e0e0e0;
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.tabla-scroll {
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #7b2325 #f0f0f0;
+}
+
+.tabla-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tabla-scroll::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.tabla-scroll::-webkit-scrollbar-thumb {
+  background-color: #7b2325;
+  border-radius: 4px;
+  border: 2px solid #f0f0f0;
+}
+
+/* Contenedor del logo en el header */
+.logo-container {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+}
+
+.logo-container img {
+  height: 40px;
+  width: auto;
+}
+
+/* Estilo para encabezados horizontales */
+.activo-cabecera {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  font-weight: bold;
+  background-color: #7b2325;
+  color: white;
+  padding: 8px;
+  border-radius: 5px 5px 0 0;
+  text-align: center;
+}
+
+.activo-datos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+  background-color: #f0f8ff;
+  text-align: center;
+}
+
+/* ===================== */
+/*        MODAL          */
+/* ===================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.hidden { display: none; }
+
+.modal {
+  width: min(720px, 95vw);
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--burdeo, #7b2325);
+  color: #fff;
+  padding: 10px 14px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.modal-close {
+  background: #fff;
+  color: #7b2325;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.modal-body {
+  padding: 14px;
+}
+
+.modal-body .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px 16px;
+}
+
+.modal-body .item {
+  background: #f8f9fb;
+  border: 1px solid #e6e6e6;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.modal-edit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-guardar {
+  background: #7b2325;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-guardar:hover { opacity: 0.92; }
+
+/* ===== Secciones del modal ===== */
+.modal-section {
+  margin-top: 10px;
+}
+
+.modal-section h4 {
+  margin: 0 0 6px 0;
+  font-size: 0.98rem;
+  color: #7b2325;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 4px;
+}
+
+/* Inspección visual: checkboxes deshabilitados */
+.iv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px 16px;
+  align-items: center;
+}
+
+.iv-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8f9fb;
+  border: 1px solid #e6e6e6;
+  padding: 8px 10px;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.iv-check input[disabled] {
+  accent-color: #7b2325; /* color del check */
+  cursor: not-allowed;
+}
+
+.iv-otro {
+  background: #f8f9fb;
+  border: 1px solid #e6e6e6;
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+
+/* Grid para los checks de ORIGEN  */
+.origen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px 16px;
+  align-items: center;
+}
+
+/* ===================================================== */
+/*   BADGE DEL CONTADOR BONITO, JUSTO SOBRE “N° Activo”  */
+/* ===================================================== */
+.columna h3 {                 /* más espacio para alojar el badge */
+  position: relative;
+  margin-bottom: 22px;        /* antes 10px */
+}
+
+.columna h3 span[id$="-count"] {
+  position: absolute;
+  left: 10px;                 /* alineado con el padding de .activo-cabecera */
+  bottom: -12px;              /* queda justo encima del encabezado de columnas */
+  background: #7b2325;
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  display: inline-block;
+}
+
+.columna h3 span[id$="-count"]::before {
+  content: "Total: ";
+  font-weight: 600;
+  margin-right: 2px;
+  opacity: .95;
+}
+
+/* un pequeño respiro sobre la barra de columnas */
+.activo-cabecera { 
+  margin-top: 6px; 
+}
+
+/* ===================================================== */
+/*  FILTRO – estilo de recuadro dentro del modal (nuevo) */
+/* ===================================================== */
+
+/* Un poquito más ancho solo para este modal */
+#filtro-modal .modal{
+  width: min(860px, 95vw);
+}
+
+/* Caja tipo “fieldset” alrededor del contenido del filtro */
+#filtro-contenido{
+  background:#fff;
+  border:2px solid #e6e6e6;
+  border-radius:10px;
+  padding:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+
+/* Tabla dentro del recuadro con encabezado tipo barra burdeo */
+#filtro-contenido .tabla-scroll{
+  max-height:420px;
+  overflow:auto;
+}
+
+#filtro-contenido table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+#filtro-contenido thead th{
+  background:#7b2325;
+  color:#fff;
+  padding:8px 10px;
+  position:sticky; top:0; z-index:1;
+}
+
+#filtro-contenido tbody td{
+  padding:8px 10px;
+  border-bottom:1px solid #eee;
+  font-size:.95rem;
+}
+
+#filtro-contenido tbody tr:nth-child(odd){ background:#fafbfc; }
+#filtro-contenido tbody tr:hover{ background:#f1f5f9; }
