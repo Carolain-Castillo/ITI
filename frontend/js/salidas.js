@@ -19,9 +19,7 @@ async function cargarSalida(cont) {
     const resp = await fetch(url);
     let items = await resp.json();
 
-    items = Array.isArray(items)
-      ? items.filter(it => (it.estado || '').trim().toLowerCase() === 'por retirar')
-      : [];
+    if (!Array.isArray(items)) items = [];
 
     // >>> Contador
     const countEl = document.getElementById('salida-count');
@@ -57,24 +55,5 @@ async function cargarSalida(cont) {
     });
   } catch (err) {
     console.error('No se pudo cargar "Salida"', err);
-  }
-}
-
-// Mostrar/Ocultar el formulario bajo cada activo
-function mostrarFormulario(icono) {
-  const contenedorActivo = icono.closest('.activo');
-  if (!contenedorActivo) return;
-
-  const formulario = contenedorActivo.querySelector('.form-salida');
-  if (!formulario) return;
-
-  if (formulario.classList.contains('oculto')) {
-    formulario.classList.remove('oculto');
-    icono.classList.remove('fa-eye');
-    icono.classList.add('fa-eye-slash');
-  } else {
-    formulario.classList.add('oculto');
-    icono.classList.remove('fa-eye-slash');
-    icono.classList.add('fa-eye');
   }
 }

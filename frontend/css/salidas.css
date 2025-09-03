@@ -14,46 +14,6 @@
   background-color: #5e1b1d; /* Un tono más oscuro al pasar el mouse */
 }
 
-/* Recuadros de Entregado / Recibido */
-.salida-recuadros {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-.salida-recuadros fieldset {
-  flex: 1;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  padding: 12px;
-  background: #fff;
-}
-.salida-recuadros legend {
-  color: #7b2325;
-  font-weight: bold;
-  padding: 0 8px;
-}
-.salida-recuadros .form-grupo {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-}
-.salida-recuadros label {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-.salida-recuadros input {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 8px;
-  font-size: 0.95rem;
-  background: #f9f9f9;
-}
-.salida-recuadros input:focus {
-  outline: none;
-  border-color: #7b2325;
-  background: #fff;
-  box-shadow: 0 0 0 2px rgba(123,35,37,0.1);
-}
 
 /* ====== Activo: mantener cabecera fija y formulario debajo a la izquierda ====== */
 .columna .activo {

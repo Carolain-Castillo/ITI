@@ -1,3 +1,4 @@
+// js/reporte_tecnico.js
 // ===============================
 // BÚSQUEDA Y AUTOCOMPLETADO
 // ===============================
@@ -31,10 +32,28 @@ const conclusionEl = document.getElementById('conclusion');
 // Botón Exportar PDF
 const btnExportarPdf = document.getElementById('rt-exportar-pdf');
 
+// ===== Modal "Reporte Guardado" =====
+const modalGuardado      = document.getElementById('rt-guardado-modal');
+const modalGuardadoOk    = document.getElementById('rt-guardado-ok');
+const modalGuardadoClose = document.getElementById('rt-guardado-cerrar');
+
+function abrirModalGuardado(){
+  modalGuardado?.classList.remove('rt-hidden');
+  modalGuardadoOk?.focus();
+}
+function cerrarModalGuardado(){
+  modalGuardado?.classList.add('rt-hidden');
+}
+modalGuardadoOk?.addEventListener('click', cerrarModalGuardado);
+modalGuardadoClose?.addEventListener('click', cerrarModalGuardado);
+modalGuardado?.addEventListener('click', (e)=>{ if(e.target === modalGuardado) cerrarModalGuardado(); });
+
 // Referencias actuales
 let currentActivoId = null;
 let currentNumeroActivo = null;
 let lastReporteId = null; 
+
+const REQUIRED_MSG = 'Completa este campo';
 
 function fmtDate(d) {
   if (!d) return '';
@@ -77,10 +96,13 @@ function limpiarFormularioReporteCompleto() {
 }
 
 async function buscarYCompletar() {
+  // limpiar mensaje de error del campo al intentar buscar
+  if (numeroInput) numeroInput.setCustomValidity('');
+
   const numero = (numeroInput?.value || '').trim();
+  // <<< Cambio solicitado: no mostrar alerta si está vacío >>>
   if (!numero) {
-    alert('Ingresa el N° de Activo para buscar.');
-    return;
+    return; // no hacer nada
   }
 
   try {
@@ -114,6 +136,9 @@ async function buscarYCompletar() {
     if (outNumeroView) outNumeroView.value = currentNumeroActivo;
 
     currentActivoId = item.id;
+
+    // como está todo ok, limpiar cualquier error previo del campo
+    if (numeroInput) numeroInput.setCustomValidity('');
   } catch (err) {
     console.error(err);
     alert('Ocurrió un error al buscar el activo.');
@@ -127,6 +152,8 @@ numeroInput?.addEventListener('keydown', (e) => {
     buscarYCompletar();
   }
 });
+// si el usuario edita el campo, limpiamos el error
+numeroInput?.addEventListener('input', () => numeroInput.setCustomValidity(''));
 
 // ===============================
 // LÓGICA EXISTENTE
@@ -157,6 +184,8 @@ function seleccionarSoloUno(clicked) {
   [estadoDisponible, estadoReciclar, estadoPrestamo].forEach(cb => {
     if (cb && cb !== clicked) cb.checked = false;
   });
+  // Si el usuario selecciona alguno, limpiamos mensaje de requerido
+  [estadoDisponible, estadoReciclar, estadoPrestamo].forEach(cb => cb?.setCustomValidity(''));
 }
 
 [estadoDisponible, estadoReciclar, estadoPrestamo].forEach(cb => {
@@ -234,14 +263,42 @@ const form = document.querySelector('form.reporte-grid');
 form?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
+  // 1) Validar que haya un activo seleccionado -> mensaje en el campo
   if (!currentActivoId) {
-    alert('Primero busca y selecciona el N° de Activo.');
+    if (numeroInput) {
+      numeroInput.focus(); // <-- asegura que el globito salga aquí primero
+      numeroInput.setCustomValidity('Primero busca y selecciona el N° de Activo.');
+      numeroInput.reportValidity();
+    }
     return;
+  } else {
+    numeroInput?.setCustomValidity('');
+  }
+
+  // 2) Validar ESTADO (al menos una casilla)
+  const estadoFinal = getEstadoFinalValue();
+  if (!estadoFinal) {
+    const anchor = estadoDisponible || estadoReciclar || estadoPrestamo;
+    if (anchor) {
+      anchor.setCustomValidity(REQUIRED_MSG);
+      anchor.reportValidity();
+    }
+    return;
+  } else {
+    [estadoDisponible, estadoReciclar, estadoPrestamo].forEach(cb => cb?.setCustomValidity(''));
+  }
+
+  // 3) Validar CONCLUSIÓN
+  if (!conclusionEl?.value?.trim()) {
+    conclusionEl.setCustomValidity(REQUIRED_MSG);
+    conclusionEl.reportValidity();
+    return;
+  } else {
+    conclusionEl.setCustomValidity('');
   }
 
   const evalFlags = getEvaluacionInicialFlags();
   const prepFlags = getPreparacionFlags();
-  const estadoFinal = getEstadoFinalValue();
 
   const body = {
     activo_id: currentActivoId,
@@ -269,6 +326,9 @@ form?.addEventListener('submit', async (e) => {
     lastReporteId = json.id;                
     if (btnExportarPdf) btnExportarPdf.disabled = false;
 
+    // Mostrar modal de confirmación
+    abrirModalGuardado();
+
     // No limpiamos aquí.
   } catch (err) {
     console.error(err);
@@ -276,6 +336,8 @@ form?.addEventListener('submit', async (e) => {
   }
 });
 
+// limpiar mensaje de requerido de conclusión al teclear
+conclusionEl?.addEventListener('input', () => conclusionEl.setCustomValidity(''));
 
 // ===============================
 // EXPORTAR PDF (sin buscador ni botones, sin cortes feos)
@@ -305,11 +367,8 @@ btnExportarPdf?.addEventListener('click', async () => {
   style.textContent = `
     body.pdf-exporting input[type="text"]{padding-top:6px;padding-bottom:6px;line-height:1.25;}
     body.pdf-exporting textarea{line-height:1.35;}
-    /* Oculta el header original y usa uno compacto en una sola fila */
     body.pdf-exporting .logo-container,
     body.pdf-exporting .reporte-header{ display:none !important; }
-
-    /* Contenedor de header temporal (fila) */
     body.pdf-exporting .pdf-header-row{
       display:flex; align-items:center; gap:10px;
       margin:0 0 6px 0;
@@ -318,8 +377,6 @@ btnExportarPdf?.addEventListener('click', async () => {
     body.pdf-exporting .pdf-header-row .pdf-title{
       flex:1; text-align:center; font-size:18px; font-weight:700; color:var(--burdeo);
     }
-
-    /* Compactaciones para caber en 1 hoja */
     body.pdf-exporting .reporte-container{ padding:14px 16px !important; }
     body.pdf-exporting .bloque{ padding:8px !important; border-width:1px !important; }
     body.pdf-exporting .bloque legend{ padding:0 6px !important; }
@@ -329,8 +386,6 @@ btnExportarPdf?.addEventListener('click', async () => {
     body.pdf-exporting .preparacion-grid{ gap:6px 18px !important; }
     body.pdf-exporting .estado-grid{ gap:6px !important; }
     body.pdf-exporting .parte-cambiada-grid{ gap:8px !important; }
-
-    /* Altura compacta de Características y Notas */
     body.pdf-exporting #rt-caracteristicas,
     body.pdf-exporting #rt-notas{
       min-height:30px !important;
@@ -342,7 +397,6 @@ btnExportarPdf?.addEventListener('click', async () => {
   document.head.appendChild(style);
   document.body.classList.add('pdf-exporting');
 
-  // Header temporal (logo + título en una sola fila)
   const pdfHeader = document.createElement('div');
   pdfHeader.className = 'pdf-header-row';
   pdfHeader.innerHTML = `
@@ -355,9 +409,8 @@ btnExportarPdf?.addEventListener('click', async () => {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
 
-    // Márgenes muy compactos para que todo entre
     const sideMargin   = 8;
-    const topMargin    = 4;   // título bien pegado arriba
+    const topMargin    = 4;
     const bottomMargin = 8;
     const gap          = 2;
 
@@ -367,13 +420,11 @@ btnExportarPdf?.addEventListener('click', async () => {
 
     let y = topMargin;
 
-    // 2) Capturar header temporal en una sola imagen
     const headCanvas = await html2canvas(pdfHeader, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
     const headH = (headCanvas.height * drawW) / headCanvas.width;
     pdf.addImage(headCanvas.toDataURL('image/png'), 'PNG', sideMargin, y, drawW, headH);
     y += headH + gap;
 
-    // 3) Cada fieldset por separado
     const bloques = Array.from(document.querySelectorAll('fieldset.bloque'));
     for (const bloque of bloques) {
       const can = await html2canvas(bloque, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
@@ -384,10 +435,7 @@ btnExportarPdf?.addEventListener('click', async () => {
       y += imgH + gap;
     }
 
-    // 4) Guardar
     pdf.save(`reporte_${(currentNumeroActivo || 'activo')}.pdf`);
-
-    // 5) Limpiar
     limpiarFormularioReporteCompleto();
 
   } catch (e) {
@@ -411,7 +459,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const numeroFromUrl = params.get('numero');
   if (numeroFromUrl && numeroInput) {
     numeroInput.value = numeroFromUrl;
-    // Llenar automáticamente los campos
     buscarYCompletar();
   }
 });

@@ -252,3 +252,57 @@ body{
 @media (min-width:900px){
   .bloque-colspan{ grid-column:1 / -1; }
 }
+
+/* ================================ */
+/* Modal básico para "Reporte Guardado" */
+/* ================================ */
+.rt-modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.rt-hidden{ display:none; }
+
+.rt-modal{
+  width: min(420px, 95vw);
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+  overflow: hidden;
+}
+.rt-modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background: var(--burdeo);
+  color:#fff;
+  padding:10px 14px;
+}
+.rt-modal-header h3{
+  margin:0;
+  font-size:1.05rem;
+}
+.rt-modal-close{
+  background:#fff;
+  color: var(--burdeo);
+  border:none;
+  border-radius:50%;
+  width:28px;
+  height:28px;
+  cursor:pointer;
+  font-size:18px;
+  font-weight:700;
+}
+.rt-modal-body{
+  padding:16px 14px 18px;
+  text-align:center;
+}
+.rt-modal-actions{
+  margin-top:10px;
+  display:flex;
+  justify-content:center;
+}

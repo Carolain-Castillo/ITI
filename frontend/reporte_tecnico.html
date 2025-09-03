@@ -1,3 +1,4 @@
+<!-- reporte_tecnico.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -26,13 +27,15 @@
       <h2>Reporte Técnico</h2>
     </header>
 
-    <form class="reporte-grid" action="#" method="post">
+    <!-- novalidate para que las validaciones automáticas no se adelanten -->
+    <form class="reporte-grid" action="#" method="post" novalidate>
 
       <!--Buscador fuera del recuadro -->
       <div class="buscador-activo bloque-colspan">
         <div class="buscador-grid">
           <div class="campo">
             <label for="rt-numero">N° de Activo</label>
+            <!-- este input es el que marcamos con mensaje si no hay activo seleccionado -->
             <input type="text" id="rt-numero" placeholder="Ej: PC-1234">
           </div>
           <div class="campo campo-buscar">
@@ -46,16 +49,12 @@
       <fieldset class="bloque bloque-colspan">
         <legend>Datos del Activo</legend>
 
-        <!-- Alineado en dos columnas -->
         <div class="datos-activo-grid">
-
-          <!-- N° de Activo (solo lectura para que salga en el PDF) -->
           <div class="campo">
             <label for="rt-numero-view">N° de Activo</label>
             <input type="text" id="rt-numero-view" readonly>
           </div>
           
-
           <div class="campo">
             <label for="rt-categoria">Categoría</label>
             <input type="text" id="rt-categoria" readonly>
@@ -169,7 +168,8 @@
       <fieldset class="bloque bloque-colspan">
         <legend>Conclusión y Recomendaciones</legend>
         <div class="campo">
-          <textarea id="conclusion" name="conclusion" rows="4" placeholder="Escriba aquí las conclusiones y recomendaciones del reporte..."></textarea>
+          <!-- sigue marcado como required, pero el form tiene novalidate y lo validamos por JS -->
+          <textarea id="conclusion" name="conclusion" rows="4" placeholder="Escriba aquí las conclusiones y recomendaciones del reporte..." required></textarea>
         </div>
       </fieldset>
 
@@ -180,6 +180,24 @@
         <button type="button" class="btn-secundario" onclick="location.href='index.html'">Volver</button>
       </div>
     </form>
+  </div>
+
+  <!-- ========================= -->
+  <!-- Modal "Reporte Guardado"  -->
+  <!-- ========================= -->
+  <div id="rt-guardado-modal" class="rt-modal-overlay rt-hidden" aria-hidden="true">
+    <div class="rt-modal">
+      <div class="rt-modal-header">
+        <h3>Reporte Guardado</h3>
+        <button class="rt-modal-close" id="rt-guardado-cerrar">×</button>
+      </div>
+      <div class="rt-modal-body">
+        <p>El reporte se guardó correctamente.</p>
+        <div class="rt-modal-actions">
+          <button id="rt-guardado-ok" class="btn-primario">Aceptar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>
