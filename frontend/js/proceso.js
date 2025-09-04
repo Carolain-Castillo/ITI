@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const cont = document.getElementById('proceso-lista');
   if (!cont) return;
 
-  // Cargamos "En Proceso": solo estado Pendiente
+  // Cargamos "En Proceso": fase "En Proceso" (estado Proceso)
   await cargarEnProceso(cont);
 
   // Prepara el mismo modal que usa Entrada (si ya está, no pasa nada)
@@ -14,14 +14,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function cargarEnProceso(cont) {
   try {
-    const url = `/api/activos?estado=${encodeURIComponent('Pendiente')}&_=${Date.now()}`;
+    const url = `/api/activos?fase=${encodeURIComponent('En Proceso')}&_=${Date.now()}`;
     const resp = await fetch(url);
     let items = await resp.json();
 
-    // Blindaje extra en el cliente
-    items = Array.isArray(items)
-      ? items.filter(it => (it.estado || '').trim().toLowerCase() === 'pendiente')
-      : [];
+    if (!Array.isArray(items)) items = [];
 
     // >>> Contador
     const countEl = document.getElementById('proceso-count');

@@ -135,7 +135,8 @@ router.patch('/activos/:id/estado', async (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
 
-    const permitidos = ['Pendiente', 'Tránsito', 'Por Retirar'];
+    const permitidos = ['Disponible','Pendiente','Proceso','Tránsito',
+  'Por Retirar','Asignado','Reasignado','Reciclaje','Vendido','Préstamo','Repuesto','Donar'];
     if (!estado || !permitidos.includes(estado)) {
       return res.status(400).json({ ok: false, msg: 'Estado inválido.' });
     }

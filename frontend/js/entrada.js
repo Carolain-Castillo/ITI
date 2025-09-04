@@ -1,23 +1,23 @@
+//js/entrada.js
+
 document.addEventListener('DOMContentLoaded', async () => {
   const cont = document.getElementById('entrada-lista');
   if (!cont) return;
 
-  // Cargar lista ENTRADA (estado Tránsito)
+  // Cargar lista ENTRADA (fase Entrada: Tránsito o Pendiente)
   await cargarEntrada(cont);
 
-  // Preparar modal
+  // Preparar modal (compartido con otras columnas)
   prepararModal();
 });
 
 async function cargarEntrada(cont) {
   try {
-    const url = `/api/activos?estado=${encodeURIComponent('Tránsito')}&_=${Date.now()}`;
+    const url = `/api/activos?fase=${encodeURIComponent('Entrada')}&_=${Date.now()}`;
     const resp = await fetch(url);
     let items = await resp.json();
 
-    items = Array.isArray(items)
-      ? items.filter(it => (it.estado || '').trim().toLowerCase() === 'tránsito')
-      : [];
+    if (!Array.isArray(items)) items = [];
 
     // >>> Contador
     const countEl = document.getElementById('entrada-count');
@@ -93,8 +93,17 @@ function fmtDate(d) {
 // Asegura que el <select id="modal-estado"> tenga todas las opciones requeridas
 function ensureEstadoOptions(selectEl) {
   if (!selectEl) return;
-  // Quitamos "Pendiente" de las opciones agregables
-  const need = ['Tránsito', 'Por Retirar'];
+
+  const need = [
+    // Entrada
+    'Tránsito','Pendiente',
+    // En Proceso
+    'Proceso',
+    // Salida
+    'Por Retirar','Asignado','Reasignado','Reciclaje','Vendido',
+    // Stock
+    'Disponible','Préstamo','Repuesto','Donar'
+  ];
   const has = new Set(Array.from(selectEl.options).map(o => o.value.trim()));
   need.forEach(v => {
     if (!has.has(v)) {
@@ -190,14 +199,17 @@ async function abrirDetalle(id) {
     `;
     // =====================================
 
-    // Aseguramos que el select tenga solo las opciones permitidas
+    // Aseguramos que el select tenga todas las opciones
     ensureEstadoOptions(combo);
 
-    // Si el estado actual no es seleccionable (ej. "Pendiente"), por defecto mostramos "Tránsito"
+    // Seleccionamos el estado actual si está en la lista, si no, por defecto "Tránsito"
     const estadoLimpio = (a.estado || '').trim();
-    combo.value = ['Tránsito', 'Por Retirar'].includes(estadoLimpio)
-      ? estadoLimpio
-      : 'Tránsito';
+    const permitidos = [
+      'Tránsito','Pendiente','Proceso',
+      'Por Retirar','Asignado','Reasignado','Reciclaje','Vendido',
+      'Disponible','Préstamo','Repuesto','Donar'
+    ];
+    combo.value = permitidos.includes(estadoLimpio) ? estadoLimpio : 'Tránsito';
 
     // Guardar cambios de Estado
     btnGuardar.onclick = async () => {

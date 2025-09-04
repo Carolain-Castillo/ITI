@@ -1,6 +1,7 @@
 // frontend/js/salidas.js
 
-// Cargar la columna "Salida" con los activos en estado "Por Retirar"
+// Cargar la columna "Salida" con los activos de la fase "Salida"
+// (Por Retirar, Asignado, Reasignado, Reciclaje, Vendido)
 document.addEventListener('DOMContentLoaded', async () => {
   const cont = document.getElementById('salida-lista');
   if (!cont) return; // si no existe el contenedor, no hacemos nada
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function cargarSalida(cont) {
   try {
-    const url = `/api/activos?estado=${encodeURIComponent('Por Retirar')}&_=${Date.now()}`;
+    const url = `/api/activos?fase=${encodeURIComponent('Salida')}&_=${Date.now()}`;
     const resp = await fetch(url);
     let items = await resp.json();
 

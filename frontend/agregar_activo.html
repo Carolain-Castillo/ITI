@@ -81,13 +81,30 @@
         <label for="estado">Estado:</label>
         <select id="estado" name="estado" required>
           <option value="">Seleccionar</option>
+
+          <!-- Entrada -->
           <option value="Pendiente">Pendiente</option>
           <option value="Tránsito">Tránsito</option>
+
+          <!-- En Proceso -->
+          <option value="Proceso">Proceso</option>
+
+          <!-- Salida -->
           <option value="Por Retirar">Por Retirar</option>
+          <option value="Asignado">Asignado</option>
+          <option value="Reasignado">Reasignado</option>
+          <option value="Reciclaje">Reciclaje</option>
+          <option value="Vendido">Vendido</option>
+
+          <!-- Otros (se mantienen tal como estaban) -->
+           <option value="Disponible">Disponible</option>
+          <option value="Préstamo">Préstamo</option>
+          <option value="Repuesto">Repuesto</option>
+          <option value="Donar">Donar</option>
         </select>
       </div>
 
-      <!-- Recuadro Origen -->
+      <!-- Origen -->
       <div class="form-origen-box">
         <fieldset>
           <legend>Origen</legend>
@@ -128,7 +145,7 @@
         <textarea id="notas" name="notas" rows="2" placeholder="Observaciones adicionales..."></textarea>
       </div>
 
-      <!-- Recuadro Inspección Visual -->
+      <!-- Inspección Visual -->
       <div class="form-inspeccion-box">
         <fieldset>
           <legend>Inspección Visual</legend>
@@ -159,7 +176,6 @@
               Con Cargador
             </label>
 
-            
             <label class="check-item">
               <input type="checkbox" id="iv-sin-danos" name="iv_sin_danos">
               Sin daños visibles
