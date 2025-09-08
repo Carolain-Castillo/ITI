@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeof prepararModal === 'function') {
     prepararModal();
   }
+
+  // Aplicar filtros si ya hay algo seleccionado
+  window.aplicarFiltrosTablero?.();
 });
 
 async function cargarEnProceso(cont) {
@@ -32,6 +35,8 @@ async function cargarEnProceso(cont) {
       const row = document.createElement('div');
       row.className = 'activo-datos';
       row.dataset.id = it.id;       // necesario para abrir el detalle
+      row.dataset.categoria = it.categoria || '';
+      row.dataset.estado = (it.estado || '').trim();
       row.style.cursor = 'pointer';
       row.title = 'Ver detalle';
 
@@ -66,6 +71,9 @@ async function cargarEnProceso(cont) {
 
       cont.appendChild(row);
     });
+
+    // Reaplicar filtros tras renderizar
+    window.aplicarFiltrosTablero?.();
   } catch (err) {
     console.error('No se pudo cargar "En Proceso"', err);
   }

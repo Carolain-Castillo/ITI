@@ -1,13 +1,12 @@
-// frontend/js/resumen.js
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const tbody = document.querySelector('.resumen table tbody');
-    const sel   = document.getElementById('resumen-select');
-    const btn   = document.getElementById('resumen-filtrar');
+    const selCat = document.getElementById('filtro-categoria');
+    const selEst = document.getElementById('filtro-estado');
 
     if (!tbody) return;
 
-    // Carga del resumen por categoría
+    // Carga del resumen por categoría (conteos)
     const resp = await fetch('/api/resumen'); // todas las fases
     const data = await resp.json();
 
@@ -15,12 +14,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     tbody.innerHTML = '';
     if (!Array.isArray(data) || data.length === 0) {
       // Si no hay datos, no agregamos filas (la tabla queda vacía)
-      // y dejamos el select vacío
-      if (sel) sel.innerHTML = '<option value="">— Sin categorías —</option>';
       return;
     }
 
-    // Poblar tabla y preparar botón "Ir" para abrir modal con la categoría
+    // Poblar tabla SOLO con Categoría y #
     data.forEach(item => {
       const tr = document.createElement('tr');
 
@@ -30,32 +27,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       const tdCant = document.createElement('td');
       tdCant.textContent = item.cantidad;
 
-      const tdBtn = document.createElement('td');
-      const go = document.createElement('button');
-      go.textContent = 'Ir';
-      go.addEventListener('click', () => abrirModalCategoria(item.categoria));
-      tdBtn.appendChild(go);
-
       tr.appendChild(tdCat);
       tr.appendChild(tdCant);
-      tr.appendChild(tdBtn);
       tbody.appendChild(tr);
     });
 
-    // Poblar SELECT del filtro
-    if (sel) {
-      sel.innerHTML = [
-        '<option value="" selected>— Selecciona —</option>',
-        ...data.map(d => `<option value="${escapeHtml(d.categoria)}">${escapeHtml(d.categoria)}</option>`)
-      ].join('');
-    }
-
-    // Acción del botón "Ver"
-    btn?.addEventListener('click', () => {
-      const cat = sel?.value || '';
-      if (!cat) return;
-      abrirModalCategoria(cat);
-    });
+    // Dejamos el botón "Ver" sin funcionalidad: no se añade ningún listener aquí
 
     prepararModalFiltro();
   } catch (err) {
@@ -64,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ================================================
-// Modal de listado por categoría (nuevo)
+// Modal y helpers (se mantienen por compatibilidad)
 // ================================================
 function prepararModalFiltro() {
   const overlay = document.getElementById('filtro-modal');
@@ -77,28 +54,50 @@ function prepararModalFiltro() {
   });
 }
 
+// Normaliza tildes y mayúsculas para comparar estados/categorías
+function normalizeTxt(s) {
+  return String(s ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase();
+}
+
+// Mantengo estas funciones (no llamadas) por si decides reactivar modales más adelante
 async function abrirModalCategoria(categoria) {
+  await abrirModalCatEstado(categoria, '');
+}
+
+async function abrirModalCatEstado(categoria, estado) {
   const overlay = document.getElementById('filtro-modal');
   const titulo  = document.getElementById('filtro-titulo');
   const cont    = document.getElementById('filtro-contenido');
   if (!overlay || !titulo || !cont) return;
 
-  titulo.textContent = `Activos - ${categoria}`;
+  const catTxt = categoria ? categoria : 'Todas las categorías';
+  const estTxt = estado ? estado : 'Todos los estados';
+  titulo.textContent = `Activos — ${catTxt} — ${estTxt}`;
 
   try {
-    // Tomamos todos los activos y filtramos por categoría en el cliente,
-    // para no depender de cambios en el backend.
     const resp = await fetch('/api/activos?_=' + Date.now());
     let items = await resp.json();
     items = Array.isArray(items) ? items : [];
 
-    const lista = items.filter(a => (a.categoria || '').trim() === categoria);
+    let lista = items;
 
-    // Render simple tipo tabla
+    if (categoria) {
+      const nCat = normalizeTxt(categoria);
+      lista = lista.filter(a => normalizeTxt(a.categoria) === nCat);
+    }
+
+    if (estado) {
+      const nEst = normalizeTxt(estado);
+      lista = lista.filter(a => normalizeTxt((a.estado || '')) === nEst);
+    }
+
     if (lista.length === 0) {
-      cont.innerHTML = `<p>No hay activos para <strong>${escapeHtml(categoria)}</strong>.</p>`;
+      cont.innerHTML = `<p>No hay activos para <strong>${escapeHtml(catTxt)}</strong> y <strong>${escapeHtml(estTxt)}</strong>.</p>`;
     } else {
-      // Usamos el mismo estilo de tabla de la página
       const rows = lista.map(a => `
         <tr>
           <td>${escapeHtml(a.numero)}</td>
@@ -127,13 +126,13 @@ async function abrirModalCategoria(categoria) {
 
     overlay.classList.remove('hidden');
   } catch (err) {
-    console.error('Error al abrir listado de categoría:', err);
+    console.error('Error al abrir listado filtrado:', err);
     cont.innerHTML = `<p>Ocurrió un error al cargar los activos.</p>`;
     overlay.classList.remove('hidden');
   }
 }
 
-// Utilidad pequeña para evitar HTML injection en textos
+// Utilidad para evitar HTML injection
 function escapeHtml(s) {
   return String(s ?? '')
     .replace(/&/g,'&amp;')

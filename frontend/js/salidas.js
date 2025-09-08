@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeof prepararModal === 'function') {
     prepararModal();
   }
+
+  // Aplicar filtros si ya hay algo seleccionado
+  window.aplicarFiltrosTablero?.();
 });
 
 async function cargarSalida(cont) {
@@ -34,6 +37,8 @@ async function cargarSalida(cont) {
       const row = document.createElement('div');
       row.className = 'activo-datos';
       row.dataset.id = it.id;
+      row.dataset.categoria = it.categoria || '';
+      row.dataset.estado = (it.estado || '').trim();
       row.style.cursor = 'pointer';
       row.title = 'Ver detalle';
 
@@ -54,6 +59,9 @@ async function cargarSalida(cont) {
 
       cont.appendChild(row);
     });
+
+    // Reaplicar filtros tras renderizar
+    window.aplicarFiltrosTablero?.();
   } catch (err) {
     console.error('No se pudo cargar "Salida"', err);
   }

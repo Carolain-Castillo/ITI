@@ -101,7 +101,7 @@ router.get('/activos', async (req, res) => {
         categoria,
         estado,
         fase,
-        origen            -- <==== agregado para que el modal muestre Origen
+        origen
       FROM activos
       ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
       ORDER BY id DESC
@@ -129,14 +129,14 @@ router.get('/activos/:id', async (req, res) => {
   }
 });
 
-// Actualizar estado
+// Actualizar estado (flujo existente)
 router.patch('/activos/:id/estado', async (req, res) => {
   try {
     const { id } = req.params;
     const { estado } = req.body;
 
     const permitidos = ['Disponible','Pendiente','Proceso','Tránsito',
-  'Por Retirar','Asignado','Reasignado','Reciclaje','Vendido','Préstamo','Repuesto','Donar'];
+      'Por Retirar','Asignado','Reasignado','Reciclaje','Vendido','Préstamo','Repuesto','Donar'];
     if (!estado || !permitidos.includes(estado)) {
       return res.status(400).json({ ok: false, msg: 'Estado inválido.' });
     }
@@ -154,6 +154,78 @@ router.patch('/activos/:id/estado', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ ok: false, msg: 'Error al actualizar estado.' });
+  }
+});
+
+// ===== NUEVO: Actualizar activo completo =====
+router.patch('/activos/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Recibimos TODO (si te interesa, puedes validar obligatorios)
+    const body = req.body || {};
+    const permitidosEstado = ['Disponible','Pendiente','Proceso','Tránsito',
+      'Por Retirar','Asignado','Reasignado','Reciclaje','Vendido','Préstamo','Repuesto','Donar'];
+
+    if (body.estado && !permitidosEstado.includes(body.estado)) {
+      return res.status(400).json({ ok:false, msg:'Estado inválido.' });
+    }
+
+    const sql = `
+      UPDATE activos SET
+        numero_activo = ?,
+        categoria = ?,
+        ticket = ?,
+        anios = ?,
+        remitente_nombre = ?,
+        fecha_recepcion_ti = ?,
+        origen = ?,
+        fecha_compra = ?,
+        caracteristicas = ?,
+        notas = ?,
+        estado = ?,
+        iv_carcasa = ?,
+        iv_teclado = ?,
+        iv_pantalla = ?,
+        iv_puertos = ?,
+        iv_cargador = ?,
+        iv_sin_danos = ?,
+        iv_otro = ?
+      WHERE id = ?
+    `;
+
+    const params = [
+      body.numero_activo ?? null,
+      body.categoria ?? null,
+      body.ticket ?? null,
+      body.anios ?? null,
+      body.remitente_nombre ?? null,
+      body.fecha_recepcion_ti ?? null,
+      body.origen ?? null,
+      body.fecha_compra ?? null,
+      body.caracteristicas ?? null,
+      body.notas ?? null,
+      body.estado ?? null,
+      body.iv_carcasa ? 1 : 0,
+      body.iv_teclado ? 1 : 0,
+      body.iv_pantalla ? 1 : 0,
+      body.iv_puertos ? 1 : 0,
+      body.iv_cargador ? 1 : 0,
+      body.iv_sin_danos ? 1 : 0,
+      (body.iv_otro && String(body.iv_otro).trim() !== '') ? String(body.iv_otro).trim() : null,
+      id
+    ];
+
+    const [result] = await db.execute(sql, params);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ ok:false, msg:'Activo no encontrado' });
+    }
+
+    // NOTA: La fase se sincroniza por TRIGGER cuando cambia "estado".
+    res.json({ ok:true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok:false, msg:'Error al actualizar activo.' });
   }
 });
 
@@ -315,27 +387,6 @@ router.get('/reportes-tecnicos/:id/pdf', async (req, res) => {
       ['Cable de Poder', rep.eval_cable_poder],
       ['Cable USB', rep.eval_cable_usb],
       ['Cable VGA/HDMI', rep.eval_cable_video],
-    ].forEach(([t, v]) => doc.text(`• ${t}: ${yn(v)}`));
-
-    doc.moveDown().fontSize(12).text('Preparación:', { underline: true });
-    doc.fontSize(10);
-    [
-      ['Instalar SO', rep.prep_instalar_so],
-      ['Crear cuenta local CyD', rep.prep_cuenta_local_cyd],
-      ['Instalar Drivers', rep.prep_instalar_drivers],
-      ['Actualización FW/SO', rep.prep_actualizacion_fw_so],
-      ['Software base CyD', rep.prep_software_base_cyd],
-      ['Crear cuenta admin', rep.prep_crear_cuenta_admin],
-      ['Quitar CyD de admins', rep.prep_quitar_cyd_admins],
-      ['Agregar CyD a usuarios avanzados/red', rep.prep_agregar_cyd_avanzados],
-      ['Diag. teclado', rep.prep_diag_teclado],
-      ['Diag. memoria', rep.prep_diag_memoria],
-      ['Diag. placa lógica', rep.prep_diag_placa],
-      ['Diag. procesador', rep.prep_diag_procesador],
-      ['Puertos OK', rep.prep_puertos_ok],
-      ['Acond. teclado', rep.prep_acond_teclado],
-      ['Acond. pantalla/carcasa', rep.prep_acond_pantalla_carcasa],
-      ['Acond. cargador', rep.prep_acond_cargador],
     ].forEach(([t, v]) => doc.text(`• ${t}: ${yn(v)}`));
 
     if (rep.parte_cambiada) {

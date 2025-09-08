@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeof prepararModal === 'function') {
     prepararModal();
   }
+
+  // Aplicar filtros si ya hay algo seleccionado
+  window.aplicarFiltrosTablero?.();
 });
 
 async function cargarStock(cont) {
@@ -32,6 +35,8 @@ async function cargarStock(cont) {
       const row = document.createElement('div');
       row.className = 'activo-datos';
       row.dataset.id = it.id;
+      row.dataset.categoria = it.categoria || '';
+      row.dataset.estado = (it.estado || '').trim();
       row.style.cursor = 'pointer';
       row.title = 'Ver detalle';
 
@@ -49,6 +54,9 @@ async function cargarStock(cont) {
 
       cont.appendChild(row);
     });
+
+    // Reaplicar filtros tras renderizar
+    window.aplicarFiltrosTablero?.();
   } catch (err) {
     console.error('No se pudo cargar "Stock Activos"', err);
   }
