@@ -218,6 +218,10 @@ footer {
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   overflow: hidden;
+  /* ===== NUEVO: ajustar a la altura de la ventana y permitir scroll interno ===== */
+  max-height: 92vh;          /* el modal nunca superará la altura visible */
+  display: flex;             /* para que el body pueda crecer y hacer scroll */
+  flex-direction: column;
 }
 
 .modal-header {
@@ -248,6 +252,10 @@ footer {
 
 .modal-body {
   padding: 14px;
+  /* ===== NUEVO: el contenido del modal es el que hace scroll ===== */
+  overflow-y: auto;
+  flex: 1;        /* ocupa todo el espacio disponible bajo el header */
+  min-height: 0;  /* fix para que flex y overflow funcionen en todos los navegadores */
 }
 
 .modal-body .grid {
@@ -377,7 +385,6 @@ footer {
   width: min(860px, 95vw);
 }
 
-/* Caja tipo “fieldset” alrededor del contenido del filtro */
 #filtro-contenido{
   background:#fff;
   border:2px solid #e6e6e6;
@@ -386,7 +393,6 @@ footer {
   box-shadow:0 4px 12px rgba(0,0,0,.06);
 }
 
-/* Tabla dentro del recuadro con encabezado tipo barra burdeo */
 #filtro-contenido .tabla-scroll{
   max-height:420px;
   overflow:auto;
@@ -414,23 +420,19 @@ footer {
 #filtro-contenido tbody tr:nth-child(odd){ background:#fafbfc; }
 #filtro-contenido tbody tr:hover{ background:#f1f5f9; }
 
-
 /* ===================================================== */
 /* Scroll interno con 4 filas visibles          */
 /* ===================================================== */
 
-/* Altura estándar por fila para calcular 4 visibles */
 :root{
   --fila-alto: 38px; /* puedes ajustar a 44–52 si quieres más/menos alto */
 }
 
-/* Asegura altura consistente por fila */
 .activo-datos{
   min-height: var(--fila-alto);
   align-items: center;
 }
 
-/* Listas con scroll: Entrada, Proceso, Salida y Stock */
 #entrada-lista,
 #proceso-lista,
 #salida-lista,
@@ -440,7 +442,6 @@ footer {
   -webkit-overflow-scrolling: touch;      /* suave en móviles */
 }
 
-/* Estética del scrollbar dentro de las casillas (opcional, a juego) */
 #entrada-lista::-webkit-scrollbar,
 #proceso-lista::-webkit-scrollbar,
 #salida-lista::-webkit-scrollbar,
@@ -461,4 +462,73 @@ footer {
   background-color: #7b2325;
   border-radius: 4px;
   border: 2px solid #f0f0f0;
+}
+
+/* ===================================================== */
+/* ======== NUEVO: Ojo y acordeón de reportes ========= */
+/* ===================================================== */
+.eye-toggle{
+  background: transparent;
+  border: 1px solid #e6e6e6;
+  color: #7b2325;
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+.eye-toggle:hover{ background:#fff3f3; }
+.eye-toggle.open{ border-color:#bbb; color:#333; }
+
+.rep-panel{
+  margin: 8px 0 10px 0;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  background:#fafbfc;
+  padding: 10px;
+}
+
+.rep-acc .rep-item{
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  background:#fff;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+}
+
+.rep-acc .rep-item > summary{
+  cursor: pointer;
+  font-weight: 600;
+  outline: none;
+}
+
+.rep-body{
+  margin-top: 8px;
+  font-size: .95rem;
+}
+
+.rep-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px 16px;
+  margin-bottom: 8px;
+}
+
+.rep-ul{
+  margin: 6px 0 0 16px;
+  padding: 0;
+}
+
+.rep-upgrade{
+  margin: 8px 0;
+}
+
+.rep-conclusion p{
+  margin: 4px 0 0 0;
+  white-space: pre-wrap;
+  text-align: justify;
 }

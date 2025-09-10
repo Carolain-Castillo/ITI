@@ -406,4 +406,24 @@ router.get('/reportes-tecnicos/:id/pdf', async (req, res) => {
   }
 });
 
+// ===============================
+// NUEVO: Listar reportes por activo (para el ojo)
+// ===============================
+router.get('/reportes-tecnicos', async (req, res) => {
+  try {
+    const { activo_id } = req.query;
+    if (!activo_id) {
+      return res.status(400).json({ ok:false, msg:'Falta activo_id' });
+    }
+    const [rows] = await db.execute(
+      `SELECT * FROM reportes_tecnicos WHERE activo_id = ? ORDER BY id DESC`,
+      [activo_id]
+    );
+    res.json(rows);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ ok:false, msg:'Error al listar reportes' });
+  }
+});
+
 module.exports = router;

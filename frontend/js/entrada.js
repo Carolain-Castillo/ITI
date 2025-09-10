@@ -1,4 +1,4 @@
-//js/entrada.js
+// js/entrada.js
 
 document.addEventListener('DOMContentLoaded', async () => {
   const cont = document.getElementById('entrada-lista');
@@ -150,9 +150,18 @@ async function abrirDetalle(id) {
 
     // ======== CONTENIDO DEL MODAL (inputs deshabilitados por defecto) ========
     caja.innerHTML = `
-      <!-- Información de Activo -->
+      <!-- Información de Activo (con OJO para reportes) -->
       <div class="modal-section">
-        <h4>Información de Activo</h4>
+        <h4 style="display:flex;align-items:center;gap:8px;">
+          <span>Información de Activo</span>
+          <button id="rep-eye" class="eye-toggle" title="Ver reportes" aria-label="Ver reportes" style="display:none;">👁️</button>
+        </h4>
+
+        <!-- Panel desplegable de reportes (inicialmente oculto) -->
+        <div id="rep-panel" class="rep-panel hidden">
+          <div id="rep-contenido" class="rep-acc"></div>
+        </div>
+
         <div class="grid">
           <div class="item">
             <strong>N° Activo:</strong>
@@ -384,6 +393,119 @@ async function abrirDetalle(id) {
         alert('No se pudo guardar los cambios.');
       }
     });
+
+    // ====== NUEVO: cargar reportes y mostrar con el MISMO DISEÑO del reporte ======
+    try {
+      const eyeBtn = document.getElementById('rep-eye');
+      const panel = document.getElementById('rep-panel');
+      const contRep = document.getElementById('rep-contenido');
+
+      // Traer todos los reportes del activo
+      const rs = await fetch(`/api/reportes-tecnicos?activo_id=${encodeURIComponent(a.id)}`);
+      const reportes = await rs.json();
+
+      if (Array.isArray(reportes) && reportes.length > 0) {
+        // Mostrar el OJO
+        eyeBtn.style.display = 'inline-flex';
+
+        // Helper para checkbox deshabilitado con el mismo look
+        const cb = (checked) => `<input type="checkbox" ${checked ? 'checked' : ''} disabled>`;
+
+        // Render acordeón con detalles y fieldsets iguales al reporte
+        contRep.innerHTML = reportes.map((r, idx) => {
+          const titulo = `Reporte #${r.id || (reportes.length - idx)}${r.estado_final ? ' — ' + r.estado_final : ''}`;
+
+          return `
+            <details class="rep-item">
+              <summary>${titulo}</summary>
+              <div class="rep-body">
+
+                <!-- Bloque: Evaluación Inicial (idéntico a reporte) -->
+                <fieldset class="bloque bloque-colspan">
+                  <legend>Evaluación Inicial</legend>
+                  <div class="evaluacion-grid">
+                    <label>${cb(!!r.eval_enciende)} Enciende</label>
+                    <label>${cb(!!r.eval_inicia_so)} Inicia Sistema Operativo</label>
+                    <label>${cb(!!r.eval_puertos)} Puertos Funcionales</label>
+                    <label>${cb(!!r.eval_pantalla)} Pantalla Funcional</label>
+                    <label>${cb(!!r.eval_bateria)} Batería Funcional</label>
+                    <label>${cb(!!r.eval_audio)} Audio Funcional</label>
+                    <label>${cb(!!r.eval_teclado)} Teclado Funcional</label>
+                    <label>${cb(!!r.eval_cargador)} Cargador Funcional</label>
+                    <label>${cb(!!r.eval_tiene_tintas)} Tiene Tintas</label>
+                    <label>${cb(!!r.eval_cable_poder)} Cable de Poder</label>
+                    <label>${cb(!!r.eval_cable_usb)} Cable USB</label>
+                    <label>${cb(!!r.eval_cable_video)} Cable VGA/HDMI</label>
+                  </div>
+                </fieldset>
+
+                <!-- Bloque: Preparación (idéntico a reporte) -->
+                <fieldset class="bloque bloque-colspan" style="margin-top:10px;">
+                  <legend>Preparación</legend>
+                  <div class="preparacion-grid">
+                    <div>
+                      <label>${cb(!!r.prep_instalar_so)} Instalar SO</label>
+                      <label>${cb(!!r.prep_cuenta_local_cyd)} Crear cuenta local CyD</label>
+                      <label>${cb(!!r.prep_instalar_drivers)} Instalar Drivers (HP, Lenovo, Dell)</label>
+                      <label>${cb(!!r.prep_actualizacion_fw_so)} Actualización Firmware y SO</label>
+                      <label>${cb(!!r.prep_software_base_cyd)} Instalar Software base CyD</label>
+                      <label>${cb(!!r.prep_crear_cuenta_admin)} Crear cuenta de administrador</label>
+                      <label>${cb(!!r.prep_quitar_cyd_admins)} Quitar cuenta CyD de administradores</label>
+                      <label>${cb(!!r.prep_agregar_cyd_avanzados)} Agregar CyD a usuarios avanzados/red</label>
+                    </div>
+                    <div>
+                      <label>${cb(!!r.prep_diag_teclado)} Diagnóstico de teclado</label>
+                      <label>${cb(!!r.prep_diag_memoria)} Diagnóstico de memoria</label>
+                      <label>${cb(!!r.prep_diag_placa)} Diagnóstico de placa lógica</label>
+                      <label>${cb(!!r.prep_diag_procesador)} Diagnóstico de procesador</label>
+                      <label>${cb(!!r.prep_puertos_ok)} Puertos funcionan correctamente</label>
+                      <label>${cb(!!r.prep_acond_teclado)} Acondicionamiento de teclado</label>
+                      <label>${cb(!!r.prep_acond_pantalla_carcasa)} Acondicionamiento de pantalla/carcasa</label>
+                      <label>${cb(!!r.prep_acond_cargador)} Acondicionamiento del cargador</label>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <!-- Bloque: Mejora (upgrade) -->
+                <fieldset class="bloque bloque-colspan" style="margin-top:10px;">
+                  <legend>Mejora (upgrade)</legend>
+                  <div class="parte-cambiada-grid">
+                    <label>${cb(!r.parte_cambiada)} No</label>
+                    <label>${cb(!!r.parte_cambiada)} Sí</label>
+                    <div class="campo-parte">
+                      <label>Parte cambiada:</label>
+                      <input type="text" value="${r.detalle_parte ? String(r.detalle_parte).replace(/"/g,'&quot;') : ''}" disabled>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <!-- Bloque: Conclusión y Recomendaciones -->
+                <fieldset class="bloque bloque-colspan" style="margin-top:10px;">
+                  <legend>Conclusión y Recomendaciones</legend>
+                  <div class="campo">
+                    <textarea rows="4" readonly>${(r.conclusion || '').toString()}</textarea>
+                  </div>
+                </fieldset>
+
+              </div>
+            </details>
+          `;
+        }).join('');
+
+        // Toggle del panel con el OJO
+        let abierto = false;
+        eyeBtn.addEventListener('click', () => {
+          abierto = !abierto;
+          eyeBtn.classList.toggle('open', abierto);
+          panel.classList.toggle('hidden', !abierto);
+        });
+      } else {
+        // No hay reportes: el ojo NO aparece
+        eyeBtn.style.display = 'none';
+      }
+    } catch (e) {
+      console.error('Error cargando reportes del activo:', e);
+    }
 
     // Mostrar modal
     overlay.classList.remove('hidden');
