@@ -11,17 +11,21 @@
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  display: flex;               /* centrado con flex */
-  flex-direction: column;      /* título arriba, gráfico abajo */
-  align-items: center;         /* centrado horizontal */
-  justify-content: center;     /* centrado vertical */
-  width: 250px;                /* un poco más ancho que antes */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 250px;
 }
 
+/* === Ajuste clave: tamaño fijo del canvas para que no “arrastre” el layout === */
 .grafico canvas {
-  max-width: 200px;            /* tamaño máximo adaptable */
-  max-height: 200px;
+  width: 220px;   /* encaja en la tarjeta de 250px */
+  height: 260px;  /* donut + leyenda sin cortes ni scroll */
+  max-width: none;
+  max-height: none;
 }
+/* === Fin ajuste de gráfico === */
 
 .resumen {
   background: white;
@@ -45,7 +49,7 @@
 /* === Barra de filtro del Resumen (actualizada) === */
 .resumen-filtro{
   display:flex;
-  flex-direction: column;   /* apilados uno bajo otro */
+  flex-direction: column;
   align-items:flex-start;
   gap:10px;
   margin:6px 0 12px 0;
@@ -218,9 +222,8 @@ footer {
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   overflow: hidden;
-  /* ===== NUEVO: ajustar a la altura de la ventana y permitir scroll interno ===== */
-  max-height: 92vh;          /* el modal nunca superará la altura visible */
-  display: flex;             /* para que el body pueda crecer y hacer scroll */
+  max-height: 92vh;
+  display: flex;
   flex-direction: column;
 }
 
@@ -252,10 +255,9 @@ footer {
 
 .modal-body {
   padding: 14px;
-  /* ===== NUEVO: el contenido del modal es el que hace scroll ===== */
   overflow-y: auto;
-  flex: 1;        /* ocupa todo el espacio disponible bajo el header */
-  min-height: 0;  /* fix para que flex y overflow funcionen en todos los navegadores */
+  flex: 1;
+  min-height: 0;
 }
 
 .modal-body .grid {
@@ -323,7 +325,7 @@ footer {
 }
 
 .iv-check input[disabled] {
-  accent-color: #7b2325; /* color del check */
+  accent-color: #7b2325;
   cursor: not-allowed;
 }
 
@@ -345,15 +347,15 @@ footer {
 /* ===================================================== */
 /*   BADGE DEL CONTADOR BONITO, JUSTO SOBRE “N° Activo”  */
 /* ===================================================== */
-.columna h3 {                 /* más espacio para alojar el badge */
+.columna h3 {
   position: relative;
-  margin-bottom: 22px;        /* antes 10px */
+  margin-bottom: 22px;
 }
 
 .columna h3 span[id$="-count"] {
   position: absolute;
-  left: 10px;                 /* alineado con el padding de .activo-cabecera */
-  bottom: -12px;              /* queda justo encima del encabezado de columnas */
+  left: 10px;
+  bottom: -12px;
   background: #7b2325;
   color: #fff;
   padding: 3px 10px;
@@ -371,16 +373,13 @@ footer {
   opacity: .95;
 }
 
-/* un pequeño respiro sobre la barra de columnas */
-.activo-cabecera { 
-  margin-top: 6px; 
+.activo-cabecera {
+  margin-top: 6px;
 }
 
 /* ===================================================== */
 /*  FILTRO – estilo de recuadro dentro del modal (nuevo) */
 /* ===================================================== */
-
-/* Un poquito más ancho solo para este modal */
 #filtro-modal .modal{
   width: min(860px, 95vw);
 }
@@ -423,9 +422,8 @@ footer {
 /* ===================================================== */
 /* Scroll interno con 4 filas visibles          */
 /* ===================================================== */
-
 :root{
-  --fila-alto: 38px; /* puedes ajustar a 44–52 si quieres más/menos alto */
+  --fila-alto: 38px;
 }
 
 .activo-datos{
@@ -437,9 +435,9 @@ footer {
 #proceso-lista,
 #salida-lista,
 #stock-lista{
-  max-height: calc(var(--fila-alto) * 4); /* 4 filas visibles */
-  overflow-y: auto;                       /* scroll con ruedita */
-  -webkit-overflow-scrolling: touch;      /* suave en móviles */
+  max-height: calc(var(--fila-alto) * 4);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 #entrada-lista::-webkit-scrollbar,
@@ -531,4 +529,45 @@ footer {
   margin: 4px 0 0 0;
   white-space: pre-wrap;
   text-align: justify;
+}
+
+/* ===== Paginación tipo Gmail en Resumen ===== */
+.resumen-pager{
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  font-size: 0.92rem;
+  color: #333;
+}
+
+.pager-range{
+  opacity: .9;
+}
+
+.pager-buttons{
+  display: inline-flex;
+  gap: 6px;
+}
+
+.pager-btn{
+  background: #fff;
+  border: 1px solid #ddd;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  user-select: none;
+}
+.pager-btn:hover{ background: #f7f7f7; }
+.pager-btn:disabled{
+  opacity: .45;
+  cursor: not-allowed;
+  background: #f9f9f9;
 }

@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const tbody = document.querySelector('.resumen table tbody');
-    const selCat = document.getElementById('filtro-categoria');
-    const selEst = document.getElementById('filtro-estado');
+    const pager = document.getElementById('resumen-pager');
+    const btnPrev = document.getElementById('res-pager-prev');
+    const btnNext = document.getElementById('res-pager-next');
+    const lblRange = document.getElementById('res-pager-range');
 
     if (!tbody) return;
 
@@ -10,30 +12,74 @@ document.addEventListener('DOMContentLoaded', async () => {
     const resp = await fetch('/api/resumen'); // todas las fases
     const data = await resp.json();
 
-    // Limpiamos y rellenamos filas reales
+    // Si no hay datos, dejamos tabla vacía y ocultamos la paginación
     tbody.innerHTML = '';
     if (!Array.isArray(data) || data.length === 0) {
-      // Si no hay datos, no agregamos filas (la tabla queda vacía)
+      if (pager) pager.style.display = 'none';
       return;
     }
 
-    // Poblar tabla SOLO con Categoría y #
-    data.forEach(item => {
-      const tr = document.createElement('tr');
+    // ---------- Paginación estilo Gmail ----------
+    const PAGE_SIZE = 4;
+    let currentPage = 1; // 1-indexed
+    const totalRows = data.length;
+    const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE));
 
-      const tdCat = document.createElement('td');
-      tdCat.textContent = item.categoria;
+    function renderPage() {
+      // límites de la página actual
+      const startIdx = (currentPage - 1) * PAGE_SIZE;         // 0-index
+      const endIdxExcl = Math.min(startIdx + PAGE_SIZE, totalRows);
 
-      const tdCant = document.createElement('td');
-      tdCant.textContent = item.cantidad;
+      // Rellenar filas visibles
+      tbody.innerHTML = '';
+      for (let i = startIdx; i < endIdxExcl; i++) {
+        const item = data[i];
+        const tr = document.createElement('tr');
 
-      tr.appendChild(tdCat);
-      tr.appendChild(tdCant);
-      tbody.appendChild(tr);
+        const tdCat = document.createElement('td');
+        tdCat.textContent = item.categoria;
+
+        const tdCant = document.createElement('td');
+        tdCant.textContent = item.cantidad;
+
+        tr.appendChild(tdCat);
+        tr.appendChild(tdCant);
+        tbody.appendChild(tr);
+      }
+
+      // Actualizar barra "1–4 de 55"
+      if (lblRange) {
+        const humanStart = startIdx + 1;
+        const humanEnd = endIdxExcl;
+        lblRange.textContent = `${humanStart}–${humanEnd} de ${totalRows}`;
+      }
+
+      // Habilitar/Deshabilitar flechas
+      if (btnPrev) btnPrev.disabled = currentPage <= 1;
+      if (btnNext) btnNext.disabled = currentPage >= totalPages;
+
+      // Mostrar/ocultar pager si no hace falta
+      if (pager) pager.style.display = totalRows > PAGE_SIZE ? '' : 'flex';
+    }
+
+    // Listeners de flechas
+    btnPrev?.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPage();
+      }
+    });
+    btnNext?.addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderPage();
+      }
     });
 
-    // Dejamos el botón "Ver" sin funcionalidad: no se añade ningún listener aquí
+    // Primera renderización
+    renderPage();
 
+    // Modal (lo conservo tal cual tenías)
     prepararModalFiltro();
   } catch (err) {
     console.error('Error cargando resumen:', err);
@@ -63,7 +109,7 @@ function normalizeTxt(s) {
     .toLowerCase();
 }
 
-// Mantengo estas funciones (no llamadas) por si decides reactivar modales más adelante
+// Mantengo estas funciones por si decides reactivar modales más adelante
 async function abrirModalCategoria(categoria) {
   await abrirModalCatEstado(categoria, '');
 }
