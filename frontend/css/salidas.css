@@ -88,3 +88,122 @@
 .columna {
   overflow: visible;
 }
+
+/* ========================================================= */
+/* === (EXISTENTE) Estilos de reporte – igual a index      ===*/
+/* ========================================================= */
+
+/* Contenedor de cada sección del reporte */
+.bloque {
+  border: 2px solid #e6e6e6;
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 12px;
+  margin: 10px 0;
+}
+
+/* Título de la sección */
+.bloque legend {
+  color: #7b2325;
+  font-weight: 600;
+  padding: 0 6px;
+}
+
+/* Grids de Evaluación / Preparación (dos columnas responsivas) */
+.evaluacion-grid,
+.preparacion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px 16px;
+  align-items: start;
+}
+
+/* Casillas y etiquetas alineadas como en index */
+.evaluacion-grid label,
+.preparacion-grid label,
+.parte-cambiada-grid label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  font-size: 0.95rem;
+}
+
+/* Acento burdeo para todos los checkboxes */
+.evaluacion-grid input[type="checkbox"],
+.preparacion-grid input[type="checkbox"],
+.parte-cambiada-grid input[type="checkbox"],
+.estado-grid input[type="checkbox"] {
+  accent-color: #7b2325;
+}
+
+/* “Mejora (upgrade)” – misma disposición */
+.parte-cambiada-grid {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 8px 12px;
+  align-items: center;
+}
+.parte-cambiada-grid .campo-parte input[type="text"],
+.parte-cambiada-grid input[type="text"] {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.95rem;
+}
+
+/* Conclusión/textarea: bordes y tamaño similares */
+.bloque textarea {
+  width: 100%;
+  min-height: 70px;
+  padding: 8px 10px;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+/* Pequeños ajustes de separación para que no se vea apretado */
+.bloque .campo { margin-bottom: 6px; }
+.bloque .campo:last-child { margin-bottom: 0; }
+
+/* Cuando pongas encabezados tipo <h4> para secciones del reporte */
+.modal-section h4,
+.reporte-section h4 {
+  margin: 0 0 6px 0;
+  font-size: 0.98rem;
+  color: #7b2325;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 4px;
+}
+
+/* ========================================================= */
+/* === NUEVO: Fila de “Entrega” + botón Enviar (modal)    ===*/
+/*      *Solo registro-salidas: no afecta otras páginas*     */
+/* ========================================================= */
+.entrega-row{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.entrega-row input{
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+}
+/* Botón "Enviar" pedido (sin acción) */
+.btn-enviar{
+  background: #7b2325;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-enviar:hover{ opacity: .92; }
