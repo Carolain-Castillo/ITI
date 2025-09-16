@@ -212,7 +212,7 @@ body{
 }
 
 /* =========================
-   NUEVO: Buscador arriba
+    Buscador arriba
    ========================= */
 .buscador-activo{ margin-bottom: 6px; }
 .buscador-grid{
@@ -232,7 +232,7 @@ body{
 }
 
 /* =========================
-   NUEVO: Datos del Activo
+    Datos del Activo
    ========================= */
 .datos-activo-grid{
   display:grid;

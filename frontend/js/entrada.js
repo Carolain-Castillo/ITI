@@ -394,7 +394,7 @@ async function abrirDetalle(id) {
       }
     });
 
-    // ====== NUEVO: cargar reportes y mostrar con el MISMO DISEÑO del reporte ======
+    // ====== cargar reportes y mostrar con el MISMO DISEÑO del reporte ======
     try {
       const eyeBtn = document.getElementById('rep-eye');
       const panel = document.getElementById('rep-panel');

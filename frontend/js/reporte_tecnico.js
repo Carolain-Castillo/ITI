@@ -48,6 +48,64 @@ modalGuardadoOk?.addEventListener('click', cerrarModalGuardado);
 modalGuardadoClose?.addEventListener('click', cerrarModalGuardado);
 modalGuardado?.addEventListener('click', (e)=>{ if(e.target === modalGuardado) cerrarModalGuardado(); });
 
+// ===== Toast helper (auto-instalable, sin tocar HTML/CSS externos) =====
+function ensureToast() {
+  let box = document.getElementById('toast');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'toast';
+    box.className = 'toast hidden';
+    box.setAttribute('role','status');
+    box.setAttribute('aria-live','polite');
+    const span = document.createElement('span');
+    span.id = 'toast-text';
+    box.appendChild(span);
+    document.body.appendChild(box);
+  }
+  // estilos mínimos si no existen
+  if (!document.getElementById('rt-toast-styles')) {
+    const st = document.createElement('style');
+    st.id = 'rt-toast-styles';
+    st.textContent = `
+      .toast{
+        position: fixed;
+        left: 50%;
+        top: 16px;
+        transform: translateX(-50%);
+        background: #e53935;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(0,0,0,.2);
+        z-index: 2000;
+        font-weight: 600;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease, transform .2s ease;
+      }
+      .toast.show{
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+        pointer-events: auto;
+      }
+      .hidden{ display:none; }
+    `;
+    document.head.appendChild(st);
+  }
+}
+
+function showToast(msg) {
+  ensureToast();
+  const box = document.getElementById('toast');
+  const txt = document.getElementById('toast-text');
+  if (!box || !txt) return;
+  txt.textContent = msg || '';
+  box.classList.remove('hidden');
+  box.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => box.classList.remove('show'), 3000);
+}
+
 // Referencias actuales
 let currentActivoId = null;
 let currentNumeroActivo = null;
@@ -100,9 +158,9 @@ async function buscarYCompletar() {
   if (numeroInput) numeroInput.setCustomValidity('');
 
   const numero = (numeroInput?.value || '').trim();
-  // <<< Cambio solicitado: no mostrar alerta si está vacío >>>
+  
   if (!numero) {
-    return; // no hacer nada
+    return; 
   }
 
   try {
@@ -114,7 +172,7 @@ async function buscarYCompletar() {
     const item = lista.find(it => String(it.numero || '').trim().toLowerCase() === numero.toLowerCase());
     if (!item) {
       limpiarCamposActivo();
-      alert('No se encontró un activo con ese N°.');
+      showToast('No se encontró un activo con ese N°.');
       return;
     }
 
@@ -141,7 +199,7 @@ async function buscarYCompletar() {
     if (numeroInput) numeroInput.setCustomValidity('');
   } catch (err) {
     console.error(err);
-    alert('Ocurrió un error al buscar el activo.');
+    showToast('Ocurrió un error al buscar el activo.');
   }
 }
 
@@ -332,7 +390,7 @@ form?.addEventListener('submit', async (e) => {
     // No limpiamos aquí.
   } catch (err) {
     console.error(err);
-    alert('❌ Error al guardar el reporte técnico.');
+    showToast('❌ Error al guardar el reporte técnico.');
   }
 });
 
@@ -344,7 +402,7 @@ conclusionEl?.addEventListener('input', () => conclusionEl.setCustomValidity('')
 // ===============================
 btnExportarPdf?.addEventListener('click', async () => {
   if (!btnExportarPdf || btnExportarPdf.disabled) {
-    alert('Primero guarda el reporte para habilitar la exportación.');
+    showToast('Primero guarda el reporte para habilitar la exportación.');
     return;
   }
 
@@ -440,7 +498,7 @@ btnExportarPdf?.addEventListener('click', async () => {
 
   } catch (e) {
     console.error(e);
-    alert('❌ Error al exportar el PDF.');
+    showToast('❌ Error al exportar el PDF.');
   } finally {
     pdfHeader.remove();
     [campoNumero, campoBuscar, barraBotones].forEach(el => {

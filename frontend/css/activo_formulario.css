@@ -1,3 +1,32 @@
+:root {
+  --burdeo: #7b2325;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
+
+.container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 2rem;
+  color: #333;
+}
+
+
+
+
 body {
   background-color: #f0f0f0;
   font-family: 'Segoe UI', sans-serif;
@@ -54,15 +83,15 @@ body {
 
 .form-grupo textarea {
   resize: vertical;
-  min-height: 60px;          /* antes 80px */
+  min-height: 60px;         
 }
 
 .grande textarea {
-  min-height: 100px;         /* antes 120px */
+  min-height: 100px;        
 }
 
 .mediana textarea {
-  min-height: 50px;          /* antes 60px */
+  min-height: 50px;          
 }
 
 .form-grupo input:focus,
@@ -167,3 +196,73 @@ body {
 .check-item input[type="checkbox"] {
   transform: translateY(1px);
 }
+
+/* ===== MODAL de error  ===== */
+.af-modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.af-hidden{ display:none; }
+
+.af-modal{
+  width: min(420px, 95vw);
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+  overflow: hidden;
+}
+
+.af-modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background: var(--burdeo);
+  color:#fff;
+  padding:10px 14px;
+}
+.af-modal-header h3{
+  margin:0;
+  font-size:1.05rem;
+}
+.af-modal-close{
+  background:#fff;
+  color: var(--burdeo);
+  border:none;
+  border-radius:50%;
+  width:28px;
+  height:28px;
+  cursor:pointer;
+  font-size:18px;
+  font-weight:700;
+}
+
+/* variante roja para error */
+.af-modal-header.af-error{
+  background:#c62828;       
+}
+.af-modal-close{ color:#c62828; }
+
+.af-modal-body{
+  padding:16px 14px 18px;
+  text-align:center;
+}
+.af-modal-actions{
+  margin-top:10px;
+  display:flex;
+  justify-content:center;
+}
+.af-btn{
+  background:#c62828;       
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:700;
+}
+.af-btn:hover{ opacity:.92; }

@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// ========= NUEVO para PDF =========
+// ========= para PDF =========
 const PDFDocument = require('pdfkit');
 
 // Crear activo
@@ -157,7 +157,7 @@ router.patch('/activos/:id/estado', async (req, res) => {
   }
 });
 
-// ===== NUEVO: Actualizar activo completo =====
+// ===== Actualizar activo completo =====
 router.patch('/activos/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -246,7 +246,7 @@ router.get('/resumen', async (req, res) => {
 });
 
 // ===============================
-// NUEVO: Crear reporte técnico
+//  Crear reporte técnico
 // ===============================
 router.post('/reportes-tecnicos', async (req, res) => {
   try {
@@ -339,7 +339,7 @@ router.post('/reportes-tecnicos', async (req, res) => {
 });
 
 // ===============================
-// NUEVO: Exportar PDF de un reporte
+//  Exportar PDF de un reporte
 // ===============================
 router.get('/reportes-tecnicos/:id/pdf', async (req, res) => {
   try {
@@ -407,7 +407,7 @@ router.get('/reportes-tecnicos/:id/pdf', async (req, res) => {
 });
 
 // ===============================
-// NUEVO: Listar reportes por activo (para el ojo)
+// Listar reportes por activo (para el ojo)
 // ===============================
 router.get('/reportes-tecnicos', async (req, res) => {
   try {

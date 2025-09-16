@@ -97,7 +97,7 @@
           <option value="Vendido">Vendido</option>
 
           <!-- Otros (se mantienen tal como estaban) -->
-           <option value="Disponible">Disponible</option>
+          <option value="Disponible">Disponible</option>
           <option value="Préstamo">Préstamo</option>
           <option value="Repuesto">Repuesto</option>
           <option value="Donar">Donar</option>
@@ -207,6 +207,22 @@
         <button type="button" onclick="location.href='index.html'">Volver</button>
       </div>
     </form>
+  </div>
+
+  <!-- ===== Modal de Error (nuevo) ===== -->
+  <div id="af-error-modal" class="af-modal-overlay af-hidden" aria-hidden="true">
+    <div class="af-modal">
+      <div class="af-modal-header af-error">
+        <h3>Error</h3>
+        <button class="af-modal-close" id="af-error-close" aria-label="Cerrar">×</button>
+      </div>
+      <div class="af-modal-body">
+        <p id="af-error-msg">No se pudo guardar el activo.</p>
+        <div class="af-modal-actions">
+          <button id="af-error-ok" class="af-btn">Aceptar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>

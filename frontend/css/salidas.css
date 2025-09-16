@@ -14,7 +14,6 @@
   background-color: #5e1b1d; /* Un tono más oscuro al pasar el mouse */
 }
 
-
 /* ====== Activo: mantener cabecera fija y formulario debajo a la izquierda ====== */
 .columna .activo {
   display: flex;
@@ -68,4 +67,24 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 100%;
+}
+
+/* ============================= */
+/*  OVERRIDES SOLO EN ESTE PAGE  */
+/* ============================= */
+
+/* Anular el scroll y el alto fijo heredado del dashboard */
+#salida-lista {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Asegurar que la tarjeta ocupe su espacio y se apilen en columna */
+#salida-lista .salida-card {
+  display: block;
+}
+
+/* Evitar recortes en esta sección específica */
+.columna {
+  overflow: visible;
 }

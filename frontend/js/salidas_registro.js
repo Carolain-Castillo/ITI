@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const cont = document.getElementById('salida-lista');
   if (!cont) return;
 
+  // Cargar una sola vez (sin auto-refresh para evitar parpadeo)
   await cargarSalidaRegistro(cont);
-  setInterval(() => cargarSalidaRegistro(cont), 5000);
 });
 
 function fmtDate(d) {

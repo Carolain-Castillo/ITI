@@ -8,6 +8,24 @@ document.addEventListener('DOMContentLoaded', () => {
   setReq('estado');        // Estado
   setReq('tipo');          // Categoría
 
+  // ===== Modal de error (nuevo) =====
+  const errorOverlay = document.getElementById('af-error-modal');
+  const errorClose   = document.getElementById('af-error-close');
+  const errorOk      = document.getElementById('af-error-ok');
+  const errorMsgEl   = document.getElementById('af-error-msg');
+
+  function abrirModalError(msg = 'No se pudo guardar el activo.') {
+    if (errorMsgEl) errorMsgEl.textContent = msg;
+    errorOverlay?.classList.remove('af-hidden');
+    errorOk?.focus();
+  }
+  function cerrarModalError() {
+    errorOverlay?.classList.add('af-hidden');
+  }
+  errorClose?.addEventListener('click', cerrarModalError);
+  errorOk?.addEventListener('click', cerrarModalError);
+  errorOverlay?.addEventListener('click', (e) => { if (e.target === errorOverlay) cerrarModalError(); });
+
   // --- Fecha Recepción TI automática (hoy) ---
   const fechaInput = document.getElementById('remitente-fecha');
   if (fechaInput) {
@@ -76,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    
     const origenSel = document.querySelector('.origen-group input[type="checkbox"]:checked');
 
     const data = {
@@ -120,8 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'index.html';
     } catch (err) {
       console.error(err);
-      // Fallback genérico
-      alert('No se pudo guardar el activo.');
+      // Modal de error
+      abrirModalError('Este activo ya existe.');
     }
   });
 });
