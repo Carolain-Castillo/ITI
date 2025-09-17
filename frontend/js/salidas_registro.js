@@ -1,5 +1,7 @@
 // SOLO para registro-salidas.html
 
+let _currentActivoId = null; // NUEVO: guardamos el id del activo abierto en el modal
+
 document.addEventListener('DOMContentLoaded', async () => {
   const cont = document.getElementById('salida-lista');
   if (!cont) return;
@@ -148,6 +150,8 @@ async function abrirDetalleSalida(id) {
     if (!resp.ok) throw new Error('No se pudo obtener el detalle');
     const a = await resp.json();
 
+    _currentActivoId = a.id; // NUEVO: recordamos el id del activo abierto
+
     // ====== CATEGORÍAS (para mostrar en un select deshabilitado) ======
     const categorias = [
       'Administrativo','Ejecutivo','CAD','BIM','Cámaras','Celulares',
@@ -162,8 +166,7 @@ async function abrirDetalleSalida(id) {
     if (titulo) titulo.textContent = `Detalle del Activo ${a.numero_activo || a.numero || ''}`;
 
     // =========================================================
-    // === NUEVO: Sección "Entrega" colocada al INICIO del modal
-    //     *con botón "Enviar" sin acción (solo UI)*
+    // === NUEVO: Sección "Entrega" con botón Enviar (opera API)
     // =========================================================
     caja.innerHTML = `
       <div class="modal-section">
@@ -389,6 +392,47 @@ async function abrirDetalleSalida(id) {
       }
     } catch (e) {
       console.error('Error cargando reportes del activo:', e);
+    }
+
+    // NUEVO: wire del botón "Enviar" para mandar el correo con PDF
+    const btnEnviar = document.getElementById('entrega-enviar');
+    const inpNom = document.getElementById('entrega-nombre');
+    const inpMail = document.getElementById('entrega-correo');
+    if (btnEnviar && inpNom && inpMail) {
+      btnEnviar.addEventListener('click', async () => {
+        const nombre = (inpNom.value || '').trim();
+        const correo = (inpMail.value || '').trim();
+
+        // Validaciones súper básicas
+        if (!nombre) { alert('Ingresa el nombre de quien retira.'); return; }
+        if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) { alert('Ingresa un correo válido de quien retira.'); return; }
+
+        btnEnviar.disabled = true;
+        btnEnviar.textContent = 'Enviando...';
+
+        try {
+          const r = await fetch('/api/entregas/enviar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              activo_id: _currentActivoId,
+              nombre_quien_retira: nombre,
+              correo_quien_retira: correo
+            })
+          });
+          const data = await r.json();
+          if (!r.ok || !data.ok) {
+            throw new Error(data?.msg || 'No se pudo enviar el correo.');
+          }
+          alert('Correo enviado correctamente.');
+        } catch (e) {
+          console.error(e);
+          alert('No se pudo enviar el correo.');
+        } finally {
+          btnEnviar.disabled = false;
+          btnEnviar.textContent = 'Enviar';
+        }
+      });
     }
 
     // Mostrar modal

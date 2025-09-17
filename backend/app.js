@@ -3,6 +3,9 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 
+// ==== NUEVO: cargar variables de entorno (.env) ====
+require('dotenv').config();
+
 const app = express();
 
 app.use(cors());
