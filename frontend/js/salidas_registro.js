@@ -378,6 +378,7 @@ async function abrirDetalleSalida(id) {
 
         contRep.innerHTML = reportes.map((r, idx) => {
           const titulo = `Reporte #${r.id || (reportes.length - idx)}${r.estado_final ? ' — ' + r.estado_final : ''}`;
+          const est = String(r.estado_final || '').toLowerCase();
           return `
             <details class="rep-item">
               <summary>${titulo}</summary>
@@ -425,6 +426,19 @@ async function abrirDetalleSalida(id) {
                     </div>
                   </div>
                 </fieldset>
+
+
+                 <!--  Bloque Estado (idéntico a reporte) -->
+                <fieldset class="bloque bloque-colspan" style="margin-top:10px;">
+                  <legend>Estado</legend>
+                  <div style="display:grid;grid-template-columns:repeat(3,minmax(140px,1fr));gap:8px 16px;align-items:center;">
+                    <label>${cb(est === 'disponible')} Disponible</label>
+                    <label>${cb(est === 'reciclar' || est === 'reciclaje')} Reciclar</label>
+                    <label>${cb(est === 'préstamo' || est === 'prestamo')} Préstamo</label>
+                  </div>
+                </fieldset>
+                
+
 
                 <fieldset class="bloque bloque-colspan" style="margin-top:10px;">
                   <legend>Mejora (upgrade)</legend>
