@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Preparar modal (mismo patrón que en index)
   prepararModal();
+
+  // >>> Modal de mensajes (inyecta HTML+CSS si no existe) <<<
+  ensureMsgModalExists();
+  prepararMsgModal();
 });
 
 function fmtDate(d) {
@@ -52,6 +56,71 @@ function prepararModal() {
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) overlay.classList.add('hidden');
   });
+}
+
+/* ============================
+   Modal de Mensajes (genérico)
+   - Se crea/injecta automáticamente
+   - Reemplaza alert(...)
+   ============================ */
+function ensureMsgModalExists(){
+  if (document.getElementById('msg-modal')) return;
+
+  // CSS inline para el modal
+  const style = document.createElement('style');
+  style.textContent = `
+    .msg-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:9999}
+    .msg-overlay.hidden{display:none}
+    .msg-dialog{width:min(380px,92vw);background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden}
+    .msg-header{background:#7b2325;color:#fff;padding:10px 14px;font-weight:700}
+    .msg-body{padding:16px 14px;color:#333;font-weight:600;text-align:center;white-space:pre-wrap}
+    .msg-actions{padding:0 14px 16px;display:flex;justify-content:center}
+    .msg-actions .btn-ok{background:#7b2325;color:#fff;border:none;border-radius:8px;padding:10px 16px;cursor:pointer;font-weight:700}
+    .msg-actions .btn-ok:hover{background:#5a1a1b}
+  `;
+  document.head.appendChild(style);
+
+  // HTML del modal
+  const html = `
+    <div id="msg-modal" class="msg-overlay hidden" aria-hidden="true">
+      <div class="msg-dialog" role="dialog" aria-modal="true" aria-labelledby="msg-title">
+        <div class="msg-header" id="msg-title">Mensaje</div>
+        <div class="msg-body" id="msg-text">...</div>
+        <div class="msg-actions">
+          <button id="msg-ok" class="btn-ok" type="button">Aceptar</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function prepararMsgModal(){
+  const overlay = document.getElementById('msg-modal');
+  const btn = document.getElementById('msg-ok');
+  if (!overlay || !btn) return;
+
+  const close = () => overlay.classList.add('hidden');
+
+  btn.addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', e => {
+    if (!overlay.classList.contains('hidden') && (e.key === 'Escape' || e.key === 'Enter')) {
+      e.preventDefault();
+      close();
+    }
+  });
+}
+
+function showMsgModal(text){
+  ensureMsgModalExists();
+  const overlay = document.getElementById('msg-modal');
+  const textEl = document.getElementById('msg-text');
+  const btn = document.getElementById('msg-ok');
+  if (!overlay || !textEl) return;
+  textEl.textContent = text;
+  overlay.classList.remove('hidden');
+  btn?.focus();
 }
 
 async function cargarSalidaRegistro(cont) {
@@ -403,9 +472,12 @@ async function abrirDetalleSalida(id) {
         const nombre = (inpNom.value || '').trim();
         const correo = (inpMail.value || '').trim();
 
-        // Validaciones súper básicas
-        if (!nombre) { alert('Ingresa el nombre de quien retira.'); return; }
-        if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) { alert('Ingresa un correo válido de quien retira.'); return; }
+        // Validaciones súper básicas -> ahora con modal
+        if (!nombre) { showMsgModal('Ingresa el nombre de quien retira.'); return; }
+        if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+          showMsgModal('Ingresa un correo válido de quien retira.');
+          return;
+        }
 
         btnEnviar.disabled = true;
         btnEnviar.textContent = 'Enviando...';
@@ -424,10 +496,10 @@ async function abrirDetalleSalida(id) {
           if (!r.ok || !data.ok) {
             throw new Error(data?.msg || 'No se pudo enviar el correo.');
           }
-          alert('Correo enviado correctamente.');
+          showMsgModal('Correo enviado correctamente.');
         } catch (e) {
           console.error(e);
-          alert('No se pudo enviar el correo.');
+          showMsgModal('No se pudo enviar el correo.');
         } finally {
           btnEnviar.disabled = false;
           btnEnviar.textContent = 'Enviar';
