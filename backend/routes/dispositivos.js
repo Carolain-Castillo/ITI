@@ -187,9 +187,26 @@ router.patch('/activos/:id', async (req, res) => {
 // Resumen por categoría
 router.get('/resumen', async (req, res) => {
   try {
-    const [rows] = await db.execute(
-      `SELECT categoria, COUNT(*) AS cantidad FROM activos GROUP BY categoria ORDER BY categoria`
-    );
+    const { estado } = req.query;
+    let sql, params = [];
+    if (estado) {
+      sql = `
+        SELECT categoria, COUNT(*) AS cantidad
+          FROM activos
+         WHERE estado = ?
+         GROUP BY categoria
+         ORDER BY categoria
+      `;
+      params = [estado];
+    } else {
+      sql = `
+        SELECT categoria, COUNT(*) AS cantidad
+          FROM activos
+         GROUP BY categoria
+         ORDER BY categoria
+      `;
+    }
+    const [rows] = await db.execute(sql, params);
     res.json(rows);
   } catch (err) {
     console.error(err);
