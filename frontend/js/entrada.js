@@ -1,5 +1,3 @@
-// js/entrada.js
-
 document.addEventListener('DOMContentLoaded', async () => {
   const cont = document.getElementById('entrada-lista');
   if (!cont) return;
@@ -414,6 +412,7 @@ async function abrirDetalle(id) {
         // Render acordeón con detalles y fieldsets iguales al reporte
         contRep.innerHTML = reportes.map((r, idx) => {
           const titulo = `Reporte #${r.id || (reportes.length - idx)}${r.estado_final ? ' — ' + r.estado_final : ''}`;
+          const est = (r.estado_final || '').toString().toLowerCase();
 
           return `
             <details class="rep-item">
@@ -463,6 +462,16 @@ async function abrirDetalle(id) {
                       <label>${cb(!!r.prep_acond_pantalla_carcasa)} Acondicionamiento de pantalla/carcasa</label>
                       <label>${cb(!!r.prep_acond_cargador)} Acondicionamiento del cargador</label>
                     </div>
+                  </div>
+                </fieldset>
+
+                <!-- Bloque: Estado (nuevo, igual al reporte) -->
+                <fieldset class="bloque bloque-colspan" style="margin-top:10px;">
+                  <legend>Estado</legend>
+                  <div class="estado-grid">
+                    <label><input type="checkbox" ${est==='disponible' ? 'checked' : ''} disabled> Disponible</label>
+                    <label><input type="checkbox" ${(est==='reciclar' || est==='reciclaje') ? 'checked' : ''} disabled> Reciclar</label>
+                    <label><input type="checkbox" ${(est==='préstamo' || est==='prestamo') ? 'checked' : ''} disabled> Préstamo</label>
                   </div>
                 </fieldset>
 
