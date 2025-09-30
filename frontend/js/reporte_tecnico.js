@@ -18,6 +18,18 @@ const outNotas           = $('#rt-notas');
 //salida de solo lectura para que aparezca en el PDF
 const outNumeroView     = $('#rt-numero-view');
 
+
+// 🔹 NUEVO: refs Inspección Visual (solo lectura)
+const ivCarcasa   = $('#iv_carcasa');
+const ivTeclado   = $('#iv_teclado');
+const ivPantalla  = $('#iv_pantalla');
+const ivPuertos   = $('#iv_puertos');
+const ivCargador  = $('#iv_cargador');
+const ivSinDanos  = $('#iv_sin_danos');
+const ivOtro      = $('#iv_otro');
+
+
+
 // IDs existentes para "Estado" y "Upgrade"
 const parteSi = document.getElementById('parteSi');
 const parteNo = document.getElementById('parteNo');
@@ -188,6 +200,18 @@ async function buscarYCompletar() {
     if (outOrigen)           outOrigen.value           = a.origen || '';
     if (outCaracteristicas)  outCaracteristicas.value  = a.caracteristicas || '';
     if (outNotas)            outNotas.value            = a.notas || '';
+
+
+    // 🔹 NUEVO: Inspección Visual
+    if (ivCarcasa)  ivCarcasa.checked  = !!a.iv_carcasa;
+    if (ivTeclado)  ivTeclado.checked  = !!a.iv_teclado;
+    if (ivPantalla) ivPantalla.checked = !!a.iv_pantalla;
+    if (ivPuertos)  ivPuertos.checked  = !!a.iv_puertos;
+    if (ivCargador) ivCargador.checked = !!a.iv_cargador;
+    if (ivSinDanos) ivSinDanos.checked = !!a.iv_sin_danos;
+    if (ivOtro)     ivOtro.value       = a.iv_otro || '';
+
+
 
     // Mostrar el número del activo si existe el campo de solo lectura
     currentNumeroActivo = (a.numero_activo || item.numero || numero).trim();
@@ -398,7 +422,7 @@ form?.addEventListener('submit', async (e) => {
 conclusionEl?.addEventListener('input', () => conclusionEl.setCustomValidity(''));
 
 // ===============================
-// EXPORTAR PDF (sin buscador ni botones, sin cortes feos)
+// EXPORTAR PDF 
 // ===============================
 btnExportarPdf?.addEventListener('click', async () => {
   if (!btnExportarPdf || btnExportarPdf.disabled) {
@@ -451,6 +475,16 @@ btnExportarPdf?.addEventListener('click', async () => {
       max-height:30px !important;
       resize:none !important;
     }
+
+
+     /* ✅ NUEVO: baja la altura de Conclusión */
+  body.pdf-exporting #conclusion{
+    min-height:28px !important;
+    height:28px !important;
+    max-height:28px !important;
+    resize:none !important;
+    overflow:hidden !important;
+  }
   `;
   document.head.appendChild(style);
   document.body.classList.add('pdf-exporting');
@@ -472,26 +506,31 @@ btnExportarPdf?.addEventListener('click', async () => {
     const bottomMargin = 8;
     const gap          = 2;
 
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    const drawW = pageW - sideMargin * 2;
+   const pageW = pdf.internal.pageSize.getWidth();
+const pageH = pdf.internal.pageSize.getHeight();
 
-    let y = topMargin;
+// 
+const contentScale = 0.92; 
+const baseDrawW = pageW - sideMargin * 2;
+const drawW = baseDrawW * contentScale;
+const left  = sideMargin + (baseDrawW - drawW) / 2;
 
-    const headCanvas = await html2canvas(pdfHeader, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-    const headH = (headCanvas.height * drawW) / headCanvas.width;
-    pdf.addImage(headCanvas.toDataURL('image/png'), 'PNG', sideMargin, y, drawW, headH);
-    y += headH + gap;
+let y = topMargin;
 
-    const bloques = Array.from(document.querySelectorAll('fieldset.bloque'));
-    for (const bloque of bloques) {
-      const can = await html2canvas(bloque, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-      const imgH = (can.height * drawW) / can.width;
+const headCanvas = await html2canvas(pdfHeader, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+const headH = (headCanvas.height * drawW) / headCanvas.width;
+pdf.addImage(headCanvas.toDataURL('image/png'), 'PNG', left, y, drawW, headH);
+y += headH + gap;
 
-      if (y + imgH > pageH - bottomMargin) { pdf.addPage(); y = topMargin; }
-      pdf.addImage(can.toDataURL('image/png'), 'PNG', sideMargin, y, drawW, imgH);
-      y += imgH + gap;
-    }
+const bloques = Array.from(document.querySelectorAll('fieldset.bloque'));
+for (const bloque of bloques) {
+  const can = await html2canvas(bloque, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+  const imgH = (can.height * drawW) / can.width;
+
+  if (y + imgH > pageH - bottomMargin) { pdf.addPage(); y = topMargin; }
+  pdf.addImage(can.toDataURL('image/png'), 'PNG', left, y, drawW, imgH);
+  y += imgH + gap;
+}
 
     pdf.save(`reporte_${(currentNumeroActivo || 'activo')}.pdf`);
     limpiarFormularioReporteCompleto();

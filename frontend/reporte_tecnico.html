@@ -93,6 +93,28 @@
         </div>
       </fieldset>
 
+
+      <!-- 🔹 NUEVO: Bloque Inspección Visual (solo lectura, autocompletado) -->
+      <fieldset class="bloque bloque-colspan">
+        <legend>Inspección Visual</legend>
+        <!-- Reuso el layout de evaluacion-grid para no tocar CSS -->
+        <div class="evaluacion-grid">
+          <label><input type="checkbox" id="iv_carcasa" disabled> Daños en Carcasa</label>
+          <label><input type="checkbox" id="iv_teclado" disabled> Daños en el Teclado</label>
+          <label><input type="checkbox" id="iv_pantalla" disabled> Pantalla Rota</label>
+          <label><input type="checkbox" id="iv_puertos" disabled> Puertos Dañados</label>
+          <label><input type="checkbox" id="iv_cargador" disabled> Con Cargador</label>
+          <label><input type="checkbox" id="iv_sin_danos" disabled> Sin daños visibles</label>
+        </div>
+        <div class="campo" style="margin-top:10px;">
+          <label for="iv_otro">Otro</label>
+          <input type="text" id="iv_otro" readonly>
+        </div>
+      </fieldset>
+      
+
+
+
       <!-- Bloque: Evaluación Inicial -->
       <fieldset class="bloque bloque-colspan">
         <legend>Evaluación Inicial</legend>

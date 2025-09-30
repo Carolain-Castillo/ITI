@@ -38,7 +38,7 @@ function buildReporteMailHTML(a, rep){
   let cssText = '';
   try { cssText = fs.readFileSync(cssPath, 'utf8'); } catch {}
 
-  // Logo (opcional)
+  // Logo 
   let logoData = '';
   try {
     const logoPath = path.join(process.cwd(), 'frontend', 'logo_cyd.png');
@@ -104,6 +104,27 @@ ${cssText}
         <div class="campo"><label>Notas</label><textarea class="one-line" readonly>${a.notas ? String(a.notas) : ''}</textarea></div>
       </div>
     </fieldset>
+
+
+    <!-- 🔹 NUEVO: Inspección Visual (desde el activo) -->
+    <fieldset class="bloque">
+      <legend>Inspección Visual</legend>
+      <div class="evaluacion-grid">
+        <label><input type="checkbox" ${checked(!!a.iv_carcasa)} disabled> Daños en Carcasa</label>
+        <label><input type="checkbox" ${checked(!!a.iv_teclado)} disabled> Daños en el Teclado</label>
+        <label><input type="checkbox" ${checked(!!a.iv_pantalla)} disabled> Pantalla Rota</label>
+        <label><input type="checkbox" ${checked(!!a.iv_puertos)} disabled> Puertos Dañados</label>
+        <label><input type="checkbox" ${checked(!!a.iv_cargador)} disabled> Con Cargador</label>
+        <label><input type="checkbox" ${checked(!!a.iv_sin_danos)} disabled> Sin daños visibles</label>
+      </div>
+      <div class="campo" style="margin-top:10px;">
+        <label>Otro</label>
+        <input value="${a.iv_otro ? String(a.iv_otro) : ''}" readonly>
+      </div>
+    </fieldset>
+    
+
+
 
     ${rep ? `
     <fieldset class="bloque">
@@ -191,7 +212,7 @@ async function renderHTMLtoPDFBuffer(html){
     format: 'A4',
     printBackground: true,
     margin: { top: '4mm', right: '4mm', bottom: '4mm', left: '4mm' },
-    scale: 0.80,
+    scale: 0.70,
     preferCSSPageSize: true
   });
   await browser.close();
@@ -222,6 +243,25 @@ async function makeEntregaPDFBuffer(a, rep){
     if (a.caracteristicas) doc.text(`Características: ${String(a.caracteristicas)}`);
     if (a.notas) doc.text(`Notas: ${String(a.notas)}`);
     doc.moveDown();
+
+
+
+    // 🔹 NUEVO: Inspección Visual en fallback
+    doc.fontSize(12).text('Inspección Visual', { underline: true });
+    doc.fontSize(10);
+    [
+      ['Daños en Carcasa', a.iv_carcasa],
+      ['Daños en el Teclado', a.iv_teclado],
+      ['Pantalla Rota', a.iv_pantalla],
+      ['Puertos Dañados', a.iv_puertos],
+      ['Con Cargador', a.iv_cargador],
+      ['Sin daños visibles', a.iv_sin_danos],
+    ].forEach(([t, v]) => doc.text(`• ${t}: ${yn(v)}`));
+    if (a.iv_otro) doc.text(`• Otro: ${String(a.iv_otro)}`);
+    doc.moveDown();
+
+
+
 
     if (rep){
       doc.fontSize(12).text('Evaluación Inicial', { underline: true });
@@ -259,7 +299,7 @@ async function sendEntregaEmail(a, rep, { nombre_quien_retira, correo_quien_reti
     }
   });
 
-  // *** Fuerza el destinatario solicitado ***
+  // *** Destinatario solicitado ***
   const toEmail   = 'c.pamelacastillorojas@gmail.com';
   const fromName  = process.env.MAIL_FROM_NAME || 'CyD ITI';
   const fromEmail = process.env.SMTP_USER || 'ccastillo@cydingenieria.com';
@@ -278,6 +318,8 @@ Categoría: ${a.categoria || ''}
 Estado: ${a.estado || ''}
 
 Fecha Recepción TI: ${fmtDate(a.fecha_recepcion_ti)}
+Retira: ${nombre_quien_retira || ''}
+Correo de quien retira: ${correo_quien_retira || ''}
 `,
     attachments: [{ filename: `entrega_${a.numero_activo || 'activo'}.pdf`, content: pdfBuffer }]
   });
