@@ -578,8 +578,7 @@ footer {
 /*    Recuadro: Disponibles      */
 /* ============================= */
 .box-disponibles{
-  width: 260px;               /* cabe perfecto en la columna derecha */
-  border: 3px solid #d12b2b;  /* borde rojo como el ejemplo */
+  width: 260px;               
   border-radius: 6px;
   overflow: hidden;
   background:#fff;
@@ -610,7 +609,7 @@ footer {
 }
 
 .boxd-table thead th{
-  background:#d12b2b;
+  background:#333131;
   color:#fff;
   padding:6px 8px;
   font-size:13px;

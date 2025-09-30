@@ -1,38 +1,63 @@
 // frontend/js/disponibles.js
 document.addEventListener('DOMContentLoaded', async () => {
-  const tbody = document.getElementById('boxd-tbody');
+  const tbody   = document.getElementById('boxd-tbody');
   const totalEl = document.getElementById('boxd-total');
   if (!tbody || !totalEl) return;
 
-  // Colores por categoría (aprox. como tu ejemplo)
-  const catPalette = {
-    'Administrativo': { bg:'#3b6cf2', fg:'#fff' },
-    'Ejecutivo':      { bg:'#ff9800', fg:'#111' },
-    'CAD':            { bg:'#ffc107', fg:'#111' },
-    'BIM':            { bg:'#27ae60', fg:'#fff' },
-    'Cámaras':        { bg:'#9c27b0', fg:'#fff' },
-    'Celulares':      { bg:'#795548', fg:'#fff' },
-    'Monitores':      { bg:'#673ab7', fg:'#fff' },
-    'Router':         { bg:'#607d8b', fg:'#fff' },
-    'Tablets':        { bg:'#26a69a', fg:'#fff' },
-    'Proyector':      { bg:'#00bcd4', fg:'#111' },
-    'BAM':            { bg:'#8bc34a', fg:'#111' },
-    'Impresora':      { bg:'#e91e63', fg:'#fff' },
-    'Servidor':       { bg:'#009688', fg:'#fff' },
-    'UPS':            { bg:'#ff5722', fg:'#fff' },
-    'Plotter':        { bg:'#4caf50', fg:'#fff' }
+  // === Colores iguales a "Distribución de Activos" ===
+  // Trae el mismo set de categorías y genera la misma paleta HSL que usa el gráfico
+  async function buildChartColorMap() {
+    try {
+      const r = await fetch('/api/resumen'); // mismo endpoint del gráfico (sin filtro)
+      const arr = await r.json();
+      const labels = Array.isArray(arr) ? arr.map(d => d.categoria) : [];
+      const n = Math.max(labels.length, 1);
+
+      // Misma paleta que grafico_index.js: HSL con hue espaciado uniformemente
+      const bg = [];
+      for (let i = 0; i < n; i++) {
+        const hue = Math.round((360 / n) * i);
+        bg.push(`hsl(${hue} 70% 55%)`);
+      }
+
+      // Construimos el mapa categoría → color
+      const map = new Map();
+      labels.forEach((cat, i) => map.set(cat, bg[i]));
+      return map;
+    } catch (e) {
+      console.error('No se pudo construir el mapa de colores del gráfico:', e);
+      return new Map();
+    }
+  }
+
+  const chartColorMap = await buildChartColorMap();
+  const colorFor = (cat) => {
+    const bg = chartColorMap.get(cat) || '#eeeeee';
+    // Texto blanco para buen contraste con la paleta HSL usada
+    return { bg, fg: '#fff' };
   };
 
-  const colorFor = (cat) => catPalette[cat] || { bg:'#eeeeee', fg:'#222' };
+  // Orden deseado para que queden visibles primero
+  const priorityOrder = { 'Administrativo':0, 'Ejecutivo':1, 'CAD':2, 'BIM':3 };
+  const prio = (cat) => (cat in priorityOrder) ? priorityOrder[cat] : 999;
 
   try {
-    // Usamos el mismo endpoint de resumen, ahora con filtro de estado.
+    // Resumen filtrado por estado Disponible
     const resp = await fetch('/api/resumen?estado=' + encodeURIComponent('Disponible'));
     const data = await resp.json();
 
+    // Ordenamos para que los 4 de interés queden arriba
+    const rows = Array.isArray(data) ? [...data] : [];
+    rows.sort((a, b) => {
+      const pa = prio(a.categoria), pb = prio(b.categoria);
+      if (pa !== pb) return pa - pb;
+      return String(a.categoria).localeCompare(String(b.categoria));
+    });
+
+    // Render
     let total = 0;
-    if (Array.isArray(data) && data.length) {
-      tbody.innerHTML = data.map(row => {
+    if (rows.length) {
+      tbody.innerHTML = rows.map(row => {
         const n = Number(row.cantidad) || 0;
         total += n;
         const { bg, fg } = colorFor(row.categoria);
@@ -51,6 +76,52 @@ document.addEventListener('DOMContentLoaded', async () => {
         </tr>`;
     }
     totalEl.textContent = String(total);
+
+    // === Scroll: envolver la TABLA completa (no el tbody) para no desalinear encabezado ===
+    const table = tbody.closest('table');       // usamos la tabla que contiene ese tbody
+    if (table && !document.getElementById('boxd-scroll-wrap')) {
+      const wrap = document.createElement('div');
+      wrap.id = 'boxd-scroll-wrap';
+      wrap.style.overflowY = 'auto';
+      wrap.style.overflowX = 'hidden';
+      wrap.style.width = '100%';
+
+      // Insertar el wrapper y mover la tabla adentro
+      const parent = table.parentElement;
+      parent.insertBefore(wrap, table);
+      wrap.appendChild(table);
+
+
+      // Dejar el thead fijo (sticky) para que no baje con el scroll
+      const thead = table.querySelector('thead');
+      if (thead) {
+        thead.style.position = 'sticky';
+        thead.style.top = '0';          // pegado arriba del contenedor con scroll
+        thead.style.zIndex = '3';       // por encima de las filas
+        // Aseguramos fondo opaco (por si la hoja tiene transparencias)
+        thead.style.background = thead.style.background || '#d33';
+      }
+
+
+      // Calcular alto = encabezado + 4 filas
+      requestAnimationFrame(() => {
+        const thead = table.querySelector('thead');
+        const headerH = thead ? thead.offsetHeight : 0;
+        const firstRow = tbody.querySelector('tr');
+        const rowH = firstRow ? firstRow.offsetHeight : 36;  // fallback
+        const maxH = headerH + (rowH * 6);
+        wrap.style.maxHeight = maxH + 'px';
+      });
+
+      // Recalcular si cambia el tamaño (opcional, por si hay fuentes responsivas)
+      window.addEventListener('resize', () => {
+        const thead = table.querySelector('thead');
+        const headerH = thead ? thead.offsetHeight : 0;
+        const firstRow = tbody.querySelector('tr');
+        const rowH = firstRow ? firstRow.offsetHeight : 36;
+        wrap.style.maxHeight = (headerH + rowH * 4) + 'px';
+      });
+    }
   } catch (e) {
     console.error('No se pudo cargar el resumen de disponibles:', e);
   }
