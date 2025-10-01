@@ -284,22 +284,22 @@ actualizarCampoParte();
 // GUARDAR REPORTE EN BD
 // ===============================
 function getEvaluacionInicialFlags() {
-  const checks = document.querySelectorAll('.evaluacion-grid input[type="checkbox"]');
+  const checks = document.querySelectorAll('.evaluacion-grid input[type="checkbox"]:not(:disabled)');
   const vals = Array.from(checks).map(ch => ch.checked);
   const safe = (i) => !!(vals[i]);
   return {
-    eval_enciende:        safe(0),
-    eval_inicia_so:       safe(1),
-    eval_puertos:         safe(2),
-    eval_pantalla:        safe(3),
-    eval_bateria:         safe(4),
-    eval_audio:           safe(5),
-    eval_teclado:         safe(6),
-    eval_cargador:        safe(7),
-    eval_tiene_tintas:    safe(8),
-    eval_cable_poder:     safe(9),
-    eval_cable_usb:       safe(10),
-    eval_cable_video:     safe(11)
+    eval_enciende:     safe(0),
+    eval_inicia_so:    safe(1),
+    eval_puertos:      safe(2),
+    eval_pantalla:     safe(3),
+    eval_bateria:      safe(4),
+    eval_audio:        safe(5),
+    eval_teclado:      safe(6),
+    eval_cargador:     safe(7),
+    eval_tiene_tintas: safe(8),
+    eval_cable_poder:  safe(9),
+    eval_cable_usb:    safe(10),
+    eval_cable_video:  safe(11),
   };
 }
 

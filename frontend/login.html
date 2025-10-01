@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ingresar | ITI</title>
+  <link rel="stylesheet" href="css/style_general.css">
+  <style>
+    body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f5f6fa}
+    .card{width:min(380px,92vw);background:#fff;border:1px solid #e6e6e6;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:22px}
+    .card h1{margin:0 0 14px;font-size:1.25rem}
+    .field{margin:10px 0}
+    .field label{display:block;font-weight:600;font-size:.9rem;margin-bottom:6px}
+    .field input{width:100%;padding:10px;border:1px solid #dcdcdc;border-radius:8px}
+    .btn{width:100%;padding:10px 14px;margin-top:12px;border:none;border-radius:10px;background:#7b2325;color:#fff;font-weight:700;cursor:pointer}
+    .btn:disabled{opacity:.7;cursor:not-allowed}
+    .err{color:#b00020;margin-top:10px;min-height:1.2em}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Acceso ITI</h1>
+    <form id="login-form">
+      <div class="field">
+        <label for="email">Correo</label>
+        <input id="email" type="email" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn" id="btn-login" type="submit">Ingresar</button>
+      <div class="err" id="login-error"></div>
+    </form>
+  </div>
+
+  <script src="js/login.js" defer></script>
+</body>
+</html>
