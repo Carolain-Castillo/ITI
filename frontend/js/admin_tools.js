@@ -22,70 +22,90 @@ async function initAdminRail(){
   rail.innerHTML = `
     <h3>Usuarios (Admin)</h3>
 
-    <div class="admin-tabs">
-      <button type="button" class="adbtn is-active" data-tab="add">Agregar</button>
-      <button type="button" class="adbtn" data-tab="edit">Editar</button>
-      <button type="button" class="adbtn" data-tab="del">Eliminar</button>
+  <div class="admin-tabs">
+    <button type="button" class="adbtn is-active" data-tab="add">Agregar</button>
+    <button type="button" class="adbtn" data-tab="edit">Editar</button>
+    <button type="button" class="adbtn" data-tab="del">Eliminar</button>
+  </div>
+
+  <!-- Agregar -->
+  <form id="ad-form-add" class="admin-view" data-view="add" autocomplete="off">
+    <!-- Campos “trampa” para desactivar autocompletado agresivo (Chrome) -->
+    <input type="text" style="display:none" autocomplete="username">
+    <input type="password" style="display:none" autocomplete="current-password">
+
+    <div class="adrow">
+      <label>Email</label>
+      <input id="ad-add-email"
+             type="email"
+             inputmode="email"
+             autocomplete="off"
+             name="adAddEmail"
+             required
+             placeholder="usuario@empresa.com">
     </div>
-
-    <!-- Agregar -->
-    <form id="ad-form-add" class="admin-view" data-view="add">
-      <div class="adrow">
-        <label>Email</label>
-        <input id="ad-add-email" type="email" required placeholder="usuario@empresa.com">
-      </div>
-      <div class="adrow">
-        <label>Nombre</label>
-        <input id="ad-add-name" type="text" required placeholder="Nombre Apellido">
-      </div>
-      <div class="adrow">
-        <label>Contraseña</label>
-        <input id="ad-add-pass" type="password" required placeholder="••••••••">
-      </div>
-      <button class="adbtn--primary" type="submit">Crear usuario</button>
-      <div id="ad-add-msg" class="admsg"></div>
-    </form>
-
-    <!-- Editar -->
-    <form id="ad-form-edit" class="admin-view" data-view="edit" hidden>
-      <div class="adrow">
-        <label>Selecciona usuario</label>
-        <select id="ad-ed-user"></select>
-      </div>
-      <div class="adrow">
-        <label>Nombre</label>
-        <input id="ad-ed-name" type="text" required>
-      </div>
-      <div class="adrow">
-        <label>Nueva contraseña (opcional)</label>
-        <input id="ad-ed-pass" type="password" placeholder="Dejar en blanco para no cambiar">
-      </div>
-      <button class="adbtn--primary" type="submit">Guardar cambios</button>
-      <div id="ad-ed-msg" class="admsg"></div>
-    </form>
-
-    <!-- Eliminar -->
-    <div id="ad-view-del" class="admin-view" data-view="del" hidden>
-      <div class="adrow">
-        <input id="ad-search" type="search" placeholder="Buscar por nombre o email…">
-      </div>
-      <div class="admin-table-wrap">
-        <table class="admin-table" id="ad-table">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Rol</th>
-              <th>Activo</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div id="ad-del-msg" class="admsg"></div>
+    <div class="adrow">
+      <label>Nombre</label>
+      <input id="ad-add-name"
+             type="text"
+             autocomplete="off"
+             name="adAddName"
+             required
+             placeholder="Nombre Apellido">
     </div>
-  `;
+    <div class="adrow">
+      <label>Contraseña</label>
+      <input id="ad-add-pass"
+             type="password"
+             autocomplete="new-password"
+             name="adAddPass"
+             required
+             placeholder="••••••••">
+    </div>
+    <button class="adbtn--primary" type="submit">Crear usuario</button>
+    <div id="ad-add-msg" class="admsg"></div>
+  </form>
+
+  <!-- Editar -->
+  <form id="ad-form-edit" class="admin-view" data-view="edit" hidden autocomplete="off">
+    <div class="adrow">
+      <label>Selecciona usuario</label>
+      <select id="ad-ed-user"></select>
+    </div>
+    <div class="adrow">
+      <label>Nombre</label>
+      <input id="ad-ed-name" type="text" autocomplete="off" name="adEdName" required>
+    </div>
+    <div class="adrow">
+      <label>Nueva contraseña (opcional)</label>
+      <input id="ad-ed-pass" type="password" autocomplete="new-password" name="adEdPass" placeholder="Dejar en blanco para no cambiar">
+    </div>
+    <button class="adbtn--primary" type="submit">Guardar cambios</button>
+    <div id="ad-ed-msg" class="admsg"></div>
+  </form>
+
+  <!-- Eliminar -->
+  <div id="ad-view-del" class="admin-view" data-view="del" hidden>
+    <div class="adrow">
+      <input id="ad-search" type="search" placeholder="Buscar por nombre o email…">
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table" id="ad-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Activo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="ad-del-msg" class="admsg"></div>
+  </div>
+`;
 
   // Insertar ANTES del gráfico → queda a su izquierda
   layout.insertBefore(rail, grafico);
@@ -145,6 +165,7 @@ async function initAdminRail(){
       const q = (rail.querySelector('#ad-search').value || '').toLowerCase();
       tbody.innerHTML = '';
       users
+        .filter(u => Number(u.id) !== Number(me.id))
         .filter(u => !q || (u.email.toLowerCase().includes(q) || (u.full_name||'').toLowerCase().includes(q)))
         .forEach(u=>{
           const tr = document.createElement('tr');
