@@ -660,3 +660,73 @@ footer {
   accent-color:#7b2325;
   cursor:not-allowed;
 }
+
+
+
+/* ===== Panel de administración (columna izquierda) ===== */
+.admin-rail{
+  width: 260px;
+  background:#fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  padding: 10px;
+}
+
+.admin-rail h3{
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 800;
+  color:#1f2937;
+}
+
+.admin-tabs{
+  display:flex; gap:6px; margin-bottom:8px;
+}
+.adbtn{
+  border:1px solid #d9d9d9;
+  background:#fff;
+  padding:6px 10px;
+  border-radius:6px;
+  font-weight:700;
+  cursor:pointer;
+}
+.adbtn:hover{ background:#f7f7f7; }
+.adbtn.is-active{
+  background:#7b2325; color:#fff; border-color:#7b2325;
+}
+
+.admin-view[hidden]{ display:none !important; }
+
+.adrow{ display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+.adrow label{ font-size:.9rem; font-weight:700; color:#374151; }
+.adrow input, .adrow select{
+  border:1px solid #ddd; border-radius:6px; padding:8px;
+  background:#fff; outline:none;
+}
+.adrow input:focus, .adrow select:focus{
+  border-color:#7b2325; box-shadow:0 0 0 3px rgba(123,35,37,.18);
+}
+
+.adbtn--primary{
+  width:100%;
+  background:#7b2325; color:#fff; border: none;
+  padding:8px 10px; border-radius:8px; font-weight:800; cursor:pointer;
+}
+.adbtn--primary:hover{ opacity:.92; }
+
+.admsg{ margin-top:6px; font-size:.9rem; color:#7b2325; min-height:1.2em; }
+
+/* tabla de eliminar */
+.admin-table-wrap{ max-height:240px; overflow:auto; border:1px solid #eee; border-radius:6px; }
+.admin-table{ width:100%; border-collapse:collapse; font-size:.92rem; }
+.admin-table th{ background:#7b2325; color:#fff; padding:6px; position:sticky; top:0; }
+.admin-table td{ border-top:1px solid #eee; padding:6px; }
+.ad-del{
+  background:#fff; border:1px solid #d9d9d9; border-radius:6px;
+  width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center;
+  cursor:pointer; font-weight:800; color:#7b2325;
+}
+.ad-del:hover{ background:#fff3f3; }
+
+/* buscador */
+#ad-search{ width:100%; padding:8px; border:1px solid #ddd; border-radius:6px; }
