@@ -20,8 +20,8 @@
 
 /* === Ajuste clave: tamaño fijo del canvas para que no “arrastre” el layout === */
 .grafico canvas {
-  width: 220px;   /* encaja en la tarjeta de 250px */
-  height: 260px;  /* donut + leyenda sin cortes ni scroll */
+  width: 220px;   
+  height: auto;  
   max-width: none;
   max-height: none;
 }
