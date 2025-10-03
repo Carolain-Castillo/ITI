@@ -266,3 +266,21 @@ body {
   font-weight:700;
 }
 .af-btn:hover{ opacity:.92; }
+
+
+
+/* Para poder posicionar el sentinela dentro del recuadro */
+.form-origen-box fieldset{ position: relative; }
+
+/* Input invisible para anclar la burbuja de validación */
+.origen-sentinela{
+  position: absolute;
+  top: 8px;          /* ajusta si quieres mover el ancla */
+  left: 8px;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;        /* invisible pero “presente” para la validación nativa */
+  pointer-events: none;
+}

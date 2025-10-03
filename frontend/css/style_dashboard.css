@@ -176,6 +176,21 @@ footer {
   left: 20px;
 }
 
+/* Botón Salir en el header */
+.logout-btn{
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: #7b2325;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.logout-btn:hover{ opacity: .92; }
+
 .logo-container img {
   height: 40px;
   width: auto;

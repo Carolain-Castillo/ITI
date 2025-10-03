@@ -52,11 +52,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // === VALIDACIONES NATIVAS (sin alertas) ===
   // 1) Origen obligatorio (al menos uno)
-  const origenSentinela = origenChecks[0] || null;
+  const origenSentinela = document.getElementById('origen-sentinela');
+
   function validarGrupoOrigen() {
-    const alguno = Array.from(origenChecks).some(c => c.checked);
-    if (origenSentinela) origenSentinela.required = !alguno;
+  const alguno = Array.from(origenChecks).some(c => c.checked);
+
+  if (!origenSentinela) return;
+
+  if (alguno) {
+    // Si hay alguno marcado, quitamos la obligación y limpiamos el mensaje
+    origenSentinela.required = false;
+    origenSentinela.setCustomValidity('');
+  } else {
+    // Si no hay ninguno, marcamos como requerido y ponemos texto personalizado
+    origenSentinela.required = true;
+    origenSentinela.setCustomValidity('Marca alguna de estas casillas si quieres continuar.');
   }
+}
+
   validarGrupoOrigen();
 
   // 2) Inspección Visual obligatoria (algún check o texto en "Otro")
