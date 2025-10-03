@@ -5,6 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const errBox = document.getElementById('alert');
   const errTxt = document.getElementById('login-error');
   const email  = document.getElementById('email');
+  email.addEventListener('input', (e) => {
+  const el = e.target;
+  const i = el.selectionStart;
+  const j = el.selectionEnd;
+  el.value = el.value.toLowerCase();
+  // restaura la posición del cursor
+  try { el.setSelectionRange(i, j); } catch {}
+});
   const pass   = document.getElementById('password');
   const toggle = document.getElementById('toggle-pass');
   const caps   = document.getElementById('caps-msg');
@@ -58,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     clearError();
 
-    const eVal = email.value.trim();
+    const eVal = email.value.trim().toLowerCase();
     const pVal = pass.value;
 
     // Falta correo o contraseña
