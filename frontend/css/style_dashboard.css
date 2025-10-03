@@ -25,7 +25,22 @@
   max-width: none;
   max-height: none;
 }
-/* === Fin ajuste de gráfico === */
+
+
+/* Buscador bajo el gráfico */
+.buscador-activos{
+  margin-top: 10px;
+  width: 100%;
+}
+.buscador-activos input{
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+
 
 .resumen {
   background: white;

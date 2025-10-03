@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Pequeño delay para que se vea el spinner
-      setTimeout(() => { window.location.href = '/index.html'; }, 200);
+      setTimeout(() => { location.replace('/index.html'); }, 200);
     } catch (e2) {
       // Muestra:
       // - "Completa correo y contraseña." (si faltan datos) -> arriba
