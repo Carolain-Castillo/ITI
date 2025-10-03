@@ -128,6 +128,8 @@ async function abrirDetalle(id) {
   const caja = document.getElementById('modal-detalle');
   const combo = document.getElementById('modal-estado');
   const btnGuardarEstado = document.getElementById('modal-guardar');
+  let editMode = false;
+
 
   if (!overlay || !caja || !combo || !btnGuardarEstado) return;
 
@@ -266,7 +268,6 @@ async function abrirDetalle(id) {
       <!-- Barra de edición completa -->
       <div class="modal-edit" id="edit-barra">
         <button id="btn-editar-activo" class="btn-guardar" type="button">Editar Activo</button>
-        <button id="btn-guardar-cambios" class="btn-guardar" type="button" style="display:none;">Guardar Cambios</button>
         <button id="btn-cancelar-edicion" class="btn-guardar" type="button" style="display:none;background:#777;">Cancelar</button>
       </div>
     `;
@@ -306,91 +307,121 @@ async function abrirDetalle(id) {
       }
     };
 
-    // ====== LÓGICA DE EDICIÓN COMPLETA ======
-    const btnEditar = document.getElementById('btn-editar-activo');
-    const btnGuardarCambios = document.getElementById('btn-guardar-cambios');
-    const btnCancelar = document.getElementById('btn-cancelar-edicion');
+    
+    // ====== UNIFICACIÓN: un solo botón "Guardar" para estado y edición ======
+let editMode = false; // bandera de edición
 
-    const camposHabilitables = [
-      '#ed-numero','#ed-categoria','#ed-ticket','#ed-anios',
-      '#ed-remitente','#ed-fecha-ti','#ed-fecha-compra',
-      '#ed-caracteristicas','#ed-notas','#ed-iv-otro'
-    ];
+// Botones de la barra de edición
+const btnEditar   = document.getElementById('btn-editar-activo');
+const btnCancelar = document.getElementById('btn-cancelar-edicion');
 
-    function setEditable(enabled) {
-      camposHabilitables.forEach(sel => {
-        const el = caja.querySelector(sel);
-        if (el) el.disabled = !enabled;
-      });
-      // Checkboxes IV
-      ['#ed-iv-carcasa','#ed-iv-teclado','#ed-iv-pantalla','#ed-iv-puertos','#ed-iv-cargador','#ed-iv-sin-danos'].forEach(sel=>{
-        const el = caja.querySelector(sel);
-        if (el) el.disabled = !enabled;
-      });
-      // Origen: permitir solo 1 marcado (exclusivo)
-      const origenChecks = caja.querySelectorAll('.edit-origen');
-      origenChecks.forEach(chk=>{
-        chk.disabled = !enabled;
-        chk.addEventListener('change', (e)=>{
-          if (!e.target.checked) return;
-          origenChecks.forEach(o => { if (o !== e.target) o.checked = false; });
-        });
-      });
+// Si existe un botón antiguo "Guardar Cambios", lo quitamos (o se puede ocultar)
+const btnGuardarCambiosLegacy = document.getElementById('btn-guardar-cambios');
+if (btnGuardarCambiosLegacy) btnGuardarCambiosLegacy.remove();
 
-      // Botones
-      btnEditar.style.display = enabled ? 'none' : '';
-      btnGuardarCambios.style.display = enabled ? '' : 'none';
-      btnCancelar.style.display = enabled ? '' : 'none';
+// Campos que se habilitan al entrar en modo edición
+const camposHabilitables = [
+  '#ed-numero','#ed-categoria','#ed-ticket','#ed-anios',
+  '#ed-remitente','#ed-fecha-ti','#ed-fecha-compra',
+  '#ed-caracteristicas','#ed-notas','#ed-iv-otro'
+];
+
+function setEditable(enabled) {
+  editMode = enabled;
+
+  // Habilita/Deshabilita inputs de texto, select y textarea
+  camposHabilitables.forEach(sel => {
+    const el = caja.querySelector(sel);
+    if (el) el.disabled = !enabled;
+  });
+
+  // Habilita/Deshabilita checkboxes de Inspección Visual
+  [
+    '#ed-iv-carcasa','#ed-iv-teclado','#ed-iv-pantalla',
+    '#ed-iv-puertos','#ed-iv-cargador','#ed-iv-sin-danos'
+  ].forEach(sel => {
+    const el = caja.querySelector(sel);
+    if (el) el.disabled = !enabled;
+  });
+
+  // Origen: permitir solo 1 marcado (exclusivo) cuando está en edición
+  const origenChecks = caja.querySelectorAll('.edit-origen');
+  origenChecks.forEach(chk => {
+    chk.disabled = !enabled;
+    chk.addEventListener('change', (e) => {
+      if (!e.target.checked) return;
+      origenChecks.forEach(o => { if (o !== e.target) o.checked = false; });
+    });
+  });
+
+  // Mostrar/Ocultar botones de edición (el "Guardar" global del modal siempre queda visible)
+  btnEditar.style.display   = enabled ? 'none' : '';
+  btnCancelar.style.display = enabled ? '' : 'none';
+}
+
+btnEditar.addEventListener('click',  () => setEditable(true));
+btnCancelar.addEventListener('click', () => setEditable(false));
+
+// ===== ÚNICO handler del botón "Guardar" del modal =====
+btnGuardarEstado.onclick = async () => {
+  try {
+    if (!editMode) {
+      // --- Guardar SOLO el Estado (flujo normal) ---
+      const nuevo = combo.value;
+      const r = await fetch(`/api/activos/${id}/estado`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevo })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || j.ok === false) throw new Error(j.msg || 'No se pudo actualizar');
+      window.location.reload();
+      return;
     }
 
-    btnEditar.addEventListener('click', () => setEditable(true));
-    btnCancelar.addEventListener('click', () => setEditable(false));
+    // --- Guardar TODOS los cambios (incluye Estado) ---
+    const origenSel = (() => {
+      const o = caja.querySelector('.edit-origen:checked');
+      return o ? o.value : null;
+    })();
 
-    btnGuardarCambios.addEventListener('click', async () => {
-      try {
-        // tomar valores
-        const origenSel = (() => {
-          const o = caja.querySelector('.edit-origen:checked');
-          return o ? o.value : null;
-        })();
+    const payload = {
+      numero_activo: (caja.querySelector('#ed-numero')?.value || '').trim(),
+      categoria: (caja.querySelector('#ed-categoria')?.value || '').trim(),
+      ticket: (caja.querySelector('#ed-ticket')?.value || '').trim(),
+      anios: parseInt(caja.querySelector('#ed-anios')?.value || '0', 10) || null,
+      remitente_nombre: (caja.querySelector('#ed-remitente')?.value || '').trim(),
+      fecha_recepcion_ti: caja.querySelector('#ed-fecha-ti')?.value || null,
+      origen: origenSel,
+      fecha_compra: caja.querySelector('#ed-fecha-compra')?.value || null,
+      caracteristicas: (caja.querySelector('#ed-caracteristicas')?.value || '').trim(),
+      notas: (caja.querySelector('#ed-notas')?.value || '').trim(),
+      estado: combo.value, // también persiste el estado elegido
+      // Inspección visual
+      iv_carcasa:   !!caja.querySelector('#ed-iv-carcasa')?.checked,
+      iv_teclado:   !!caja.querySelector('#ed-iv-teclado')?.checked,
+      iv_pantalla:  !!caja.querySelector('#ed-iv-pantalla')?.checked,
+      iv_puertos:   !!caja.querySelector('#ed-iv-puertos')?.checked,
+      iv_cargador:  !!caja.querySelector('#ed-iv-cargador')?.checked,
+      iv_sin_danos: !!caja.querySelector('#ed-iv-sin-danos')?.checked,
+      iv_otro: (caja.querySelector('#ed-iv-otro')?.value || '').trim()
+    };
 
-        const payload = {
-          numero_activo: (caja.querySelector('#ed-numero')?.value || '').trim(),
-          categoria: (caja.querySelector('#ed-categoria')?.value || '').trim(),
-          ticket: (caja.querySelector('#ed-ticket')?.value || '').trim(),
-          anios: parseInt(caja.querySelector('#ed-anios')?.value || '0', 10) || null,
-          remitente_nombre: (caja.querySelector('#ed-remitente')?.value || '').trim(),
-          fecha_recepcion_ti: caja.querySelector('#ed-fecha-ti')?.value || null,
-          origen: origenSel,
-          fecha_compra: caja.querySelector('#ed-fecha-compra')?.value || null,
-          caracteristicas: (caja.querySelector('#ed-caracteristicas')?.value || '').trim(),
-          notas: (caja.querySelector('#ed-notas')?.value || '').trim(),
-          // Estado se toma desde el combo superior (y actualizará fase por trigger)
-          estado: combo.value,
-          // IV
-          iv_carcasa: !!caja.querySelector('#ed-iv-carcasa')?.checked,
-          iv_teclado: !!caja.querySelector('#ed-iv-teclado')?.checked,
-          iv_pantalla: !!caja.querySelector('#ed-iv-pantalla')?.checked,
-          iv_puertos: !!caja.querySelector('#ed-iv-puertos')?.checked,
-          iv_cargador: !!caja.querySelector('#ed-iv-cargador')?.checked,
-          iv_sin_danos: !!caja.querySelector('#ed-iv-sin-danos')?.checked,
-          iv_otro: (caja.querySelector('#ed-iv-otro')?.value || '').trim()
-        };
-
-        const r = await fetch(`/api/activos/${id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const j = await r.json().catch(()=>({}));
-        if (!r.ok || j.ok === false) throw new Error(j.msg || 'No se pudo guardar los cambios');
-
-        window.location.reload();
-      } catch (err) {
-        console.error(err);
-        alert('No se pudo guardar los cambios.');
-      }
+    const r = await fetch(`/api/activos/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
+    const j = await r.json().catch(()=>({}));
+    if (!r.ok || j.ok === false) throw new Error(j.msg || 'No se pudo guardar los cambios');
+
+    window.location.reload();
+  } catch (err) {
+    console.error(err);
+    alert('No se pudo guardar.');
+  }
+};
+
 
     // ====== cargar reportes y mostrar con el MISMO DISEÑO del reporte ======
     try {
