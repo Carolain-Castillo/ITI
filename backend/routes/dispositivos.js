@@ -22,7 +22,6 @@ function fmtDate(val){
 
 /* =========================
    CRUD de activos / reportes
-   (sin cambios fuera de lo pedido)
    ========================= */
 
 // Crear activo
@@ -247,7 +246,7 @@ router.post('/reportes-tecnicos', async (req, res) => {
   }
 });
 
-// Exportar PDF de un reporte (stream con PDFKit)
+// Exportar PDF de un reporte 
 router.get('/reportes-tecnicos/:id/pdf', async (req, res) => {
   try {
     const { id } = req.params;
@@ -319,9 +318,9 @@ router.get('/reportes-tecnicos', async (req, res) => {
   }
 });
 
-/* ============================================================
-   ENVIAR CORREO CON PDF (delegado al servicio reporteMail.js)
-   ============================================================ */
+/* =======================
+   ENVIAR CORREO CON PDF 
+   ======================= */
 router.post('/entregas/enviar', async (req, res) => {
   try {
     const { activo_id, nombre_quien_retira, correo_quien_retira } = req.body || {};
@@ -334,7 +333,7 @@ router.post('/entregas/enviar', async (req, res) => {
     if (!acts.length) return res.status(404).json({ ok:false, msg:'Activo no encontrado.' });
     const a = acts[0];
 
-    // Último reporte técnico (opcional)
+    // Último reporte técnico
     const [reps] = await db.execute(
       `SELECT * FROM reportes_tecnicos WHERE activo_id = ? ORDER BY id DESC LIMIT 1`,
       [activo_id]

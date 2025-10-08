@@ -1,4 +1,4 @@
-/* Botón Volver (mismo estilo que otros botones del sistema) */
+/* Botón Volver  */
 .btn-volver {
   background-color: #7b2325; /* Color principal de los otros botones */
   color: #fff;
@@ -73,24 +73,24 @@
 /*  OVERRIDES SOLO EN ESTE PAGE  */
 /* ============================= */
 
-/* Anular el scroll y el alto fijo heredado del dashboard */
+
 #salida-lista {
   max-height: none !important;
   overflow: visible !important;
 }
 
-/* Asegurar que la tarjeta ocupe su espacio y se apilen en columna */
+
 #salida-lista .salida-card {
   display: block;
 }
 
-/* Evitar recortes en esta sección específica */
+
 .columna {
   overflow: visible;
 }
 
 /* ========================================================= */
-/* === (EXISTENTE) Estilos de reporte – igual a index      ===*/
+/* ===  Estilos de reporte – igual a index      ===*/
 /* ========================================================= */
 
 /* Contenedor de cada sección del reporte */
@@ -137,7 +137,7 @@
   accent-color: #7b2325;
 }
 
-/* “Mejora (upgrade)” – misma disposición */
+/* “Mejora (upgrade)”  */
 .parte-cambiada-grid {
   display: grid;
   grid-template-columns: auto auto 1fr;
@@ -154,7 +154,7 @@
   font-size: 0.95rem;
 }
 
-/* Conclusión/textarea: bordes y tamaño similares */
+/* Conclusión/textarea */
 .bloque textarea {
   width: 100%;
   min-height: 70px;
@@ -165,11 +165,11 @@
   resize: vertical;
 }
 
-/* Pequeños ajustes de separación para que no se vea apretado */
+
 .bloque .campo { margin-bottom: 6px; }
 .bloque .campo:last-child { margin-bottom: 0; }
 
-/* Cuando pongas encabezados tipo <h4> para secciones del reporte */
+
 .modal-section h4,
 .reporte-section h4 {
   margin: 0 0 6px 0;
@@ -180,8 +180,8 @@
 }
 
 /* ========================================================= */
-/* === NUEVO: Fila de “Entrega” + botón Enviar (modal)    ===*/
-/*      *Solo registro-salidas: no afecta otras páginas*     */
+/* === Fila de “Entrega” + botón Enviar (modal)    ===*/
+/*      Solo registro-salidas     */
 /* ========================================================= */
 .entrega-row{
   display: flex;
@@ -196,7 +196,7 @@
   font-size: 0.95rem;
   background: #fff;
 }
-/* Botón "Enviar" pedido (sin acción) */
+/* Botón "Enviar"  */
 .btn-enviar{
   background: #7b2325;
   color: #fff;

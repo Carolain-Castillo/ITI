@@ -6,8 +6,8 @@ require('dotenv').config();
 
 const session = require('express-session');
 
-const authRoutes = require('./routes/auth');                 // login/logout/me + admin users
-const dispositivosRoutes = require('./routes/dispositivos'); // tus rutas existentes
+const authRoutes = require('./routes/auth');                 
+const dispositivosRoutes = require('./routes/dispositivos'); 
 
 const app = express();
 

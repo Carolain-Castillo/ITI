@@ -19,7 +19,7 @@ const outNotas           = $('#rt-notas');
 const outNumeroView     = $('#rt-numero-view');
 
 
-// 🔹 NUEVO: refs Inspección Visual (solo lectura)
+//  Inspección Visual (solo lectura)
 const ivCarcasa   = $('#iv_carcasa');
 const ivTeclado   = $('#iv_teclado');
 const ivPantalla  = $('#iv_pantalla');
@@ -202,7 +202,7 @@ async function buscarYCompletar() {
     if (outNotas)            outNotas.value            = a.notas || '';
 
 
-    // 🔹 NUEVO: Inspección Visual
+    //  Inspección Visual
     if (ivCarcasa)  ivCarcasa.checked  = !!a.iv_carcasa;
     if (ivTeclado)  ivTeclado.checked  = !!a.iv_teclado;
     if (ivPantalla) ivPantalla.checked = !!a.iv_pantalla;
@@ -477,7 +477,7 @@ btnExportarPdf?.addEventListener('click', async () => {
     }
 
 
-     /* ✅ NUEVO: baja la altura de Conclusión */
+     /*  baja la altura de Conclusión */
   body.pdf-exporting #conclusion{
     min-height:28px !important;
     height:28px !important;

@@ -106,7 +106,7 @@ ${cssText}
     </fieldset>
 
 
-    <!-- 🔹 NUEVO: Inspección Visual (desde el activo) -->
+    <!--  Inspección Visual (desde el activo) -->
     <fieldset class="bloque">
       <legend>Inspección Visual</legend>
       <div class="evaluacion-grid">
@@ -202,7 +202,7 @@ ${cssText}
 </html>`;
 }
 
-// Render con Puppeteer (si está disponible)
+// Render con Puppeteer 
 async function renderHTMLtoPDFBuffer(html){
   if (!puppeteer) return null;
   const browser = await puppeteer.launch({ args: ['--no-sandbox','--disable-setuid-sandbox'] });
@@ -246,7 +246,7 @@ async function makeEntregaPDFBuffer(a, rep){
 
 
 
-    // 🔹 NUEVO: Inspección Visual en fallback
+    //  Inspección Visual en fallback
     doc.fontSize(12).text('Inspección Visual', { underline: true });
     doc.fontSize(10);
     [

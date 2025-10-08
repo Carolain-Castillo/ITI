@@ -78,7 +78,7 @@ function renderIVCheck(label, value, id, disabled = true) {
   `;
 }
 
-// Render de un "origen" (checkbox único). Si disabled=false, dejo data-origen para manejar exclusividad
+// Render de un "origen" (checkbox único). Si disabled=false, data-origen para manejar exclusividad
 function renderOrigenCheck(label, origenDb, disabled = true) {
   const checked = ((origenDb || '').trim() === label) ? 'checked' : '';
   const dis = disabled ? 'disabled' : '';
@@ -309,13 +309,13 @@ async function abrirDetalle(id) {
 
     
     // ====== UNIFICACIÓN: un solo botón "Guardar" para estado y edición ======
-let editMode = false; // bandera de edición
+let editMode = false; 
 
 // Botones de la barra de edición
 const btnEditar   = document.getElementById('btn-editar-activo');
 const btnCancelar = document.getElementById('btn-cancelar-edicion');
 
-// Si existe un botón antiguo "Guardar Cambios", lo quitamos (o se puede ocultar)
+
 const btnGuardarCambiosLegacy = document.getElementById('btn-guardar-cambios');
 if (btnGuardarCambiosLegacy) btnGuardarCambiosLegacy.remove();
 
@@ -366,7 +366,7 @@ btnCancelar.addEventListener('click', () => setEditable(false));
 btnGuardarEstado.onclick = async () => {
   try {
     if (!editMode) {
-      // --- Guardar SOLO el Estado (flujo normal) ---
+      // --- Guardar Estado  ---
       const nuevo = combo.value;
       const r = await fetch(`/api/activos/${id}/estado`, {
         method: 'PATCH',

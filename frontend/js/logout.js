@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   btn.addEventListener('click', async () => {
     try {
-      // Si tu backend expone un logout, esto limpia la sesión/COOKIE
+      // Si backend expone un logout, esto limpia la sesión/COOKIE
       await fetch('/api/logout', { method: 'POST', credentials: 'same-origin', cache: 'no-store'});
     } catch (e) {
       // Si no existe /api/logout, simplemente ignoramos el error

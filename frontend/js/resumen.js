@@ -1,3 +1,5 @@
+// frontend/js/resumen.js
+// Manejo de la tabla resumen con paginación estilo Gmail
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const tbody = document.querySelector('.resumen table tbody');
@@ -79,7 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Primera renderización
     renderPage();
 
-    // Modal (lo conservo tal cual tenías)
+    // Modal 
     prepararModalFiltro();
   } catch (err) {
     console.error('Error cargando resumen:', err);

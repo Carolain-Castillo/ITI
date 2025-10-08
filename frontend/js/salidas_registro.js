@@ -1,7 +1,7 @@
 // SOLO para registro-salidas.html
 
-let _currentActivoId = null; // NUEVO: guardamos el id del activo abierto en el modal
-
+let _currentActivoId = null; //  guardamos el id del activo abierto en el modal
+// (para usarlo al enviar el correo de entrega)
 document.addEventListener('DOMContentLoaded', async () => {
   const cont = document.getElementById('salida-lista');
   if (!cont) return;
@@ -219,7 +219,7 @@ async function abrirDetalleSalida(id) {
     if (!resp.ok) throw new Error('No se pudo obtener el detalle');
     const a = await resp.json();
 
-    _currentActivoId = a.id; // NUEVO: recordamos el id del activo abierto
+    _currentActivoId = a.id; //  recordamos el id del activo abierto
 
     // ====== CATEGORÍAS (para mostrar en un select deshabilitado) ======
     const categorias = [
@@ -235,7 +235,7 @@ async function abrirDetalleSalida(id) {
     if (titulo) titulo.textContent = `Detalle del Activo ${a.numero_activo || a.numero || ''}`;
 
     // =========================================================
-    // === NUEVO: Sección "Entrega" con botón Enviar (opera API)
+    // === Sección "Entrega" con botón Enviar (opera API)
     // =========================================================
     caja.innerHTML = `
       <div class="modal-section">
@@ -477,7 +477,7 @@ async function abrirDetalleSalida(id) {
       console.error('Error cargando reportes del activo:', e);
     }
 
-    // NUEVO: wire del botón "Enviar" para mandar el correo con PDF
+    // wire del botón "Enviar" para mandar el correo con PDF
     const btnEnviar = document.getElementById('entrega-enviar');
     const inpNom = document.getElementById('entrega-nombre');
     const inpMail = document.getElementById('entrega-correo');
@@ -525,6 +525,6 @@ async function abrirDetalleSalida(id) {
     overlay.classList.remove('hidden');
   } catch (err) {
     console.error(err);
-    // Sin alert para mantener consistencia con tus modales
+    
   }
 }

@@ -24,7 +24,7 @@
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;          /* ← llena toda la pantalla */
-  background-attachment: fixed;    /* opcional: efecto suave al hacer scroll */
+  background-attachment: fixed;    
 }
 
 .auth-wrap{
@@ -133,7 +133,7 @@
   margin-top:12px; text-align:center; color:var(--muted); font-size:.85rem
 }
 
-/* Small screens tweaks */
+
 @media (max-width: 380px){
   .brand-sub{ display:none }
 }

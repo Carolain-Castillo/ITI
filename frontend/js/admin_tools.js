@@ -2,12 +2,12 @@
 document.addEventListener('DOMContentLoaded', initAdminRail);
 
 async function initAdminRail(){
-  // ¿Quién soy?
+  
   let me;
   try{
     const r = await fetch('/api/me', { credentials:'same-origin' });
     const data = await r.json();
-    if (!data.ok || !data.user || data.user.role !== 'admin') return; // no admin → no panel
+    if (!data.ok || !data.user || data.user.role !== 'admin') return; 
     me = data.user;
   }catch{ return; }
 
@@ -107,7 +107,7 @@ async function initAdminRail(){
   </div>
 `;
 
-  // Insertar ANTES del gráfico → queda a su izquierda
+  //  gráfico queda a su izquierda
   layout.insertBefore(rail, grafico);
 
   // Tabs

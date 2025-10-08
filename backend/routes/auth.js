@@ -40,7 +40,7 @@ router.post('/api/login', async (req, res) => {
   }
 });
 
-// -------- QUIEN SOY ----------
+
 router.get('/api/me', (req, res) => {
   res.json({ ok: !!req.session?.user, user: req.session?.user || null });
 });

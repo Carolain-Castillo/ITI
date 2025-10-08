@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const y = document.getElementById('y');
   if (y) y.textContent = new Date().getFullYear();
 
-  // Prefill de correo si lo guardamos antes
+  // Prefil de correo si lo guardamos antes
   const savedEmail = localStorage.getItem('iti.login.email');
   if (savedEmail) {
     email.value = savedEmail;

@@ -275,12 +275,12 @@ body {
 /* Input invisible para anclar la burbuja de validación */
 .origen-sentinela{
   position: absolute;
-  top: 8px;          /* ajusta si quieres mover el ancla */
+  top: 8px;          
   left: 8px;
   width: 1px;
   height: 1px;
   padding: 0;
   border: 0;
-  opacity: 0;        /* invisible pero “presente” para la validación nativa */
+  opacity: 0;        
   pointer-events: none;
 }

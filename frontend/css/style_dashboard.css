@@ -18,7 +18,7 @@
   width: 250px;
 }
 
-/* === Ajuste clave: tamaño fijo del canvas para que no “arrastre” el layout === */
+/* === tamaño fijo del canvas para que no “arrastre” el layout === */
 .grafico canvas {
   width: 220px;   
   height: auto;  
@@ -61,7 +61,7 @@
   text-align: left;
 }
 
-/* === Barra de filtro del Resumen (actualizada) === */
+/* === Barra de filtro del Resumen  === */
 .resumen-filtro{
   display:flex;
   flex-direction: column;
@@ -107,7 +107,7 @@
   cursor: pointer;
 }
 
-/* === Tablero: ahora grid de 3 columnas === */
+/* === Tablero: grid de 3 columnas === */
 .tablero {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -128,7 +128,7 @@
   padding-bottom: 5px;
 }
 
-/* Stock debe abarcar el ancho del tablero (las 3 columnas) */
+/* Stock ancho del tablero (las 3 columnas) */
 .columna.columna-stock {
   grid-column: 1 / -1;
 }
@@ -375,7 +375,7 @@ footer {
 }
 
 /* ===================================================== */
-/*   BADGE DEL CONTADOR BONITO, JUSTO SOBRE “N° Activo”  */
+/*   BADGE DEL CONTADOR, JUSTO SOBRE “N° Activo”  */
 /* ===================================================== */
 .columna h3 {
   position: relative;
@@ -408,7 +408,7 @@ footer {
 }
 
 /* ===================================================== */
-/*  FILTRO – estilo de recuadro dentro del modal (nuevo) */
+/*  FILTRO – estilo de recuadro dentro del modal  */
 /* ===================================================== */
 #filtro-modal .modal{
   width: min(860px, 95vw);

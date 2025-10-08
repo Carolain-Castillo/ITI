@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setReq('estado');        // Estado
   setReq('tipo');          // Categoría
 
-  // ===== Modal de error (nuevo) =====
+  // ===== Modal de error  =====
   const errorOverlay = document.getElementById('af-error-modal');
   const errorClose   = document.getElementById('af-error-close');
   const errorOk      = document.getElementById('af-error-ok');

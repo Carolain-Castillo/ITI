@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!tbody || !totalEl) return;
 
   // === Colores iguales a "Distribución de Activos" ===
-  // Trae el mismo set de categorías y genera la misma paleta HSL que usa el gráfico
+  // Trae el mismo set de categorías y genera la misma paleta que usa el gráfico
   async function buildChartColorMap() {
     try {
       const r = await fetch('/api/resumen'); // mismo endpoint del gráfico (sin filtro)
@@ -13,14 +13,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       const labels = Array.isArray(arr) ? arr.map(d => d.categoria) : [];
       const n = Math.max(labels.length, 1);
 
-      // Misma paleta que grafico_index.js: HSL con hue espaciado uniformemente
+      
       const bg = [];
       for (let i = 0; i < n; i++) {
         const hue = Math.round((360 / n) * i);
         bg.push(`hsl(${hue} 70% 55%)`);
       }
 
-      // Construimos el mapa categoría → color
+      // mapa categoría → color
       const map = new Map();
       labels.forEach((cat, i) => map.set(cat, bg[i]));
       return map;
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         thead.style.position = 'sticky';
         thead.style.top = '0';          // pegado arriba del contenedor con scroll
         thead.style.zIndex = '3';       // por encima de las filas
-        // Aseguramos fondo opaco (por si la hoja tiene transparencias)
+        
         thead.style.background = thead.style.background || '#d33';
       }
 
